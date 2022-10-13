@@ -10,7 +10,7 @@ function App() {
       <Routes>
         {
           //privatekey_exists()?
-          false ? <Route path="/" element={<Login />} /> :
+          true ? <Route path="/" element={<Login />} /> :
             <Route path="/" element={<CreateWallet />} />
         }
 
