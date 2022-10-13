@@ -6,6 +6,7 @@ import { MDBInput } from 'mdb-react-ui-kit';
 // import generate_keypair from "../../scripts/generate_keypair"
 
 const create_wallet = password => {
+
   // if (meets_password_criteria(password)) {
   // store_password(password);
   // generate_keypair();

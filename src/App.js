@@ -1,14 +1,19 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Startup from "./pages/Startup/Startup";
+import Login from "./pages/Login/Login";
 import CreateWallet from "./pages/CreateWallet/CreateWallet";
+// import privatekey_exists from "../../scripts/privatekey_exists"
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Startup />} />
-        <Route path="/create-wallet" element={<CreateWallet />} />
+        {
+          //privatekey_exists()?
+          false ? <Route path="/" element={<Login />} /> :
+            <Route path="/" element={<CreateWallet />} />
+        }
+
       </Routes>
     </Router>
   );
