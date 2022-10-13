@@ -1,12 +1,16 @@
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Startup from "./pages/Startup/Startup";
+import CreateWallet from "./pages/CreateWallet/CreateWallet";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>Hello World</p>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Startup />} />
+        <Route path="/create-wallet" element={<CreateWallet />} />
+      </Routes>
+    </Router>
   );
 }
 
