@@ -1,17 +1,19 @@
-// (A) LOAD ENCRYPT LIBRARY
 import CryptoJS from "crypto-js";
 
-function store_password(PasswordParameter){
-// (B) SECRET KEY
-    var key = "DahabIsTheSecretKey";
+function store_password(password){
 
-    // (C) ENCRYPT
-    var cipher = CryptoJS.AES.encrypt(key, PasswordParameter);
+    let key = "DahabIsTheSecretKey";
+
+    var cipher = CryptoJS.AES.encrypt(key, password);
     cipher = cipher.toString();
-    window.localStorage.setItem('passFile', cipher);
-
-    return true;
+    
+    try{
+        window.localStorage.setItem('passFile', cipher);
+        if(window.localStorage.getItem('passFile') !== cipher) return false;
+    }catch(e){
+        return false;
+    }
+    
 }
-
 
 export default store_password;
