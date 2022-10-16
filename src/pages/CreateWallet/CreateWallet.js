@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
-// import meets_password_criteria from "../../scripts/meets_password_criteria"
-// import store_password from "../../scripts/store_password"
+import meets_password_criteria from "../../scripts/meets_password_criteria"
+import store_password from "../../scripts/store_password"
 // import generate_keypair from "../../scripts/generate_keypair"
 
 const create_wallet = password => {
 
-  // if (meets_password_criteria(password)) {
-  // store_password(password);
-  // generate_keypair();
-  // } else {
-  //   alert("Please, use a stronger password")
-  // }
+  if (meets_password_criteria(password)) {
+    store_password(password);
+    // generate_keypair();
+  } else {
+    alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
+  }
 }
 const CreateWalletPage = () => {
   const [password, set_password] = useState("");
