@@ -1,4 +1,3 @@
-
 import CryptoJS from "crypto-js";
 
 function is_password_valid(password){

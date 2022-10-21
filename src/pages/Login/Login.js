@@ -3,12 +3,11 @@ import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
 
-// import is_password_valid from "../../scripts/is_password_valid"
+import is_password_valid from "../../scripts/is_password_valid"
 
 const login = (navigate, password) => {
   if (
-    // is_password_valid(password)
-    true
+    is_password_valid(password)
   ) {
     navigate("/wallet", { replace: true });
   } else {
