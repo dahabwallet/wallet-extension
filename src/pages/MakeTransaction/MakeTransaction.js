@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import send_transaction from "../../scripts/make_transfer_transaction"
 
 
-const  send_transaction_navigate = async (navigate, sender_priv_key, receiver_addr, amount) => {
+const  send_transaction_navigate = async (navigate, receiver_addr, amount) => {
  try{
-  let result=   await send_transaction(sender_priv_key, receiver_addr, amount);
+  let sender_priv_key= window.localStorage.getItem('privateKey');
+  await send_transaction(sender_priv_key, receiver_addr, amount);
   alert("Transaction Successful")
-  // navigate("/transaction-successful", { replace: true });
+ 
  }
  catch(e) {
   alert("Transaction Failed")
@@ -23,7 +24,6 @@ const MakeTransactionPage = () => {
   const [amount, set_amount] = useState("");
 
   let navigate = useNavigate();
-  let  sender_priv_key= "a4295385c67787a34e49c4ead739b0d13da7650d84501100f3c4c5b6c89e59c3"
 
   return (
     <div style={styles.parentStyle}>
@@ -33,7 +33,7 @@ const MakeTransactionPage = () => {
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
       <MDBInput label='Amount in ETH' type='text' size='lg' onChange={e => set_amount(e.target.value)} />
 
-      <button className='btn' style={styles.btnStyle} onClick={() => send_transaction_navigate(navigate, sender_priv_key, receiver_addr, amount)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => send_transaction_navigate(navigate, receiver_addr, amount)}>
         Send Transaction
       </button>
     </div >
