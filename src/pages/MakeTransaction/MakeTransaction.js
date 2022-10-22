@@ -4,14 +4,16 @@ import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
 import send_transaction from "../../scripts/make_transfer_transaction"
 
-// import is_password_valid from "../../scripts/is_password_valid"
 
-const  send_transaction_navigate = (navigate, sender_priv_key, receiver_addr, amount) => {
+const  send_transaction_navigate = async (navigate, sender_priv_key, receiver_addr, amount) => {
  try{
-  let result=  send_transaction(sender_priv_key, receiver_addr, amount);
-  navigate("/transaction-successful", { replace: true });
+  let result=   await send_transaction(sender_priv_key, receiver_addr, amount);
+  alert("Transaction Successful")
+  // navigate("/transaction-successful", { replace: true });
  }
  catch(e) {
+  alert("Transaction Failed")
+
   console.log(e)
     
   } 
@@ -22,9 +24,6 @@ const MakeTransactionPage = () => {
 
   let navigate = useNavigate();
   let  sender_priv_key= "a4295385c67787a34e49c4ead739b0d13da7650d84501100f3c4c5b6c89e59c3"
-// receiver_pub_key= "0x313907De9f0F4722E4aE9de2b54E456CbB2a4929"
-// amount= "0.002"
-// send_transaction(sender_priv_key, receiver_pub_key, amount)
 
   return (
     <div style={styles.parentStyle}>
