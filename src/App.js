@@ -17,7 +17,7 @@ function App() {
             <Route path="/" element={<CreateWallet />} />
             
         }
-        <Route path="/make-transaction" element={<MakeTransaction />} />
+        <Route path="/wallet" element={<MakeTransaction />} />
         <Route path="/transaction-successful" element={<TransactionSuccessful />} />
 
         

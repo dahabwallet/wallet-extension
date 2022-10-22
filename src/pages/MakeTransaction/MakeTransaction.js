@@ -6,18 +6,21 @@ import send_transaction from "../../scripts/make_transfer_transaction"
 
 
 const  send_transaction_navigate = async (navigate, receiver_addr, amount) => {
- try{
-  let sender_priv_key= window.localStorage.getItem('privateKey');
-  await send_transaction(sender_priv_key, receiver_addr, amount);
-  alert("Transaction Successful")
- 
- }
- catch(e) {
-  alert("Transaction Failed")
 
-  console.log(e)
+    let sender_priv_key= window.localStorage.getItem('privateKey');
     
-  } 
+    try{
+      
+      await send_transaction(sender_priv_key, receiver_addr, amount);
+      alert("Transaction Successful")
+    
+    }
+    catch(e) {
+      alert("Transaction Failed")
+
+      console.log(e)
+        
+      } 
 }
 const MakeTransactionPage = () => {
   const [receiver_addr, set_receiver_addr] = useState("");
