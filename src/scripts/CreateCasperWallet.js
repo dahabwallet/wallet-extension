@@ -2,6 +2,9 @@
 var casper.CasperClient = require('casper-j-sdk');
 var casper.decodeBase16 = require('casper-j-sdk');
 */
+/*
+	This is a fake comment to test how to change commit author and sign the commit by my GPG key at the same time
+*/ 
 import CasperClient from "casper-js-sdk";
 import decodeBase16 from "casper-js-sdk";
 
