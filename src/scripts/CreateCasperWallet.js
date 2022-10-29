@@ -4,7 +4,7 @@ var casper.decodeBase16 = require('casper-j-sdk');
 */
 /*
 	
-	//No sign
+	//diaa commit
 */ 
 import CasperClient from "casper-js-sdk";
 import decodeBase16 from "casper-js-sdk";
