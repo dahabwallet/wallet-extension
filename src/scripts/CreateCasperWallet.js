@@ -5,6 +5,7 @@ var casper.decodeBase16 = require('casper-j-sdk');
 /*
 	
 	//diaa commit
+	//diaa2
 */ 
 import CasperClient from "casper-js-sdk";
 import decodeBase16 from "casper-js-sdk";
