@@ -1,8 +1,8 @@
 const privatekey_exists = () => {
-  // window.localStorage.removeItem('privateKey');
-  // window.localStorage.removeItem('publicKey');
+  // window.localStorage.removeItem('ETH_privateKey');
+  // window.localStorage.removeItem('ETH_publicKey');
 
-  let privateKey = window.localStorage.getItem('privateKey');
+  let privateKey = window.localStorage.getItem('ETH_privateKey');
   if (privateKey) {
     return true
   }
