@@ -1,4 +1,3 @@
-
 import { PublicKey, Connection, clusterApiUrl } from '@solana/web3.js';
 
 const get_balance = async (publicKey) => {
