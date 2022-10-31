@@ -4,6 +4,7 @@ import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
 // import send_transaction from "../../scripts/make_transfer_transaction"
 import send_transaction from "../../scripts/Casper/transfer_transaction"
+import sol_send_transaction from "../../scripts/Solana/make_transfer_transaction"
 
 
 const send_transaction_navigate = async (navigate, receiver_addr, amount) => {
