@@ -36,7 +36,7 @@ const MakeTransactionPage = () => {
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
-      <MDBInput label='Amount in ETH' type='text' size='lg' onChange={e => set_amount(e.target.value)} />
+      <MDBInput label='Amount in SOL' type='text' size='lg' onChange={e => set_amount(e.target.value)} />
 
       <button className='btn' style={styles.btnStyle} onClick={() => send_transaction_navigate(navigate, receiver_addr, amount)}>
         Send Transaction
