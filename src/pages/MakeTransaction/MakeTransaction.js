@@ -119,13 +119,7 @@ const getAllBalances= async (chains) => {
            balance_map[chain_name_lower]=  37
 
 
-
-
   }
-
-
-
-
 
 
 }
@@ -178,14 +172,11 @@ const  masterSendTransaction = async (navigate, chain_name, receiver_addr, amoun
     if (chain_name == 'solana')
       solanaSendTransaction();
 
-    // await send_transaction(sender_priv_key, receiver_addr, amount);
-    // alert("Transaction Successful")
   
   }
   catch(e) {
 
-    alert("Transaction Failed")
-    console.log(e)
+    navigate('/report', { state: { message: 'Transaction Failed', statusId: 2, page: 'wallet' } })
       
     } 
 }
@@ -217,6 +208,7 @@ const MakeTransactionPage = () => {
 
           <form>
           <select 
+          style={styles.dropDownStyle}
           value={selected_chain} 
           onChange={(e) => {setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map[e.target.value.toLowerCase()]}`)}}>
             {chains.map((value) => (
@@ -227,7 +219,7 @@ const MakeTransactionPage = () => {
           </select>
         </form>
 
-          <h2 class="display-3" style={{ color: colors["black-text"] }}>Balance: {balance}</h2>
+          <h2 class="display-3" style={{ color: colors["black-text"], fontSize: 22, justifyContent: "center", marginTop:10 }}>Balance: {balance}</h2>
         
 
           <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
@@ -257,6 +249,16 @@ const styles = {
     color: "white",
     backgroundColor: colors['orange'],
     border: "none"
+  },
+  dropDownStyle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: "white",
+    backgroundColor: colors['orange'],
+    border: "none",
+    width: 240,
+    height: 30, 
+    justifyContent: "center"
   },
   imgStyle: {
     width: 240,
