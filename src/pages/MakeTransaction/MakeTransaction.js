@@ -219,7 +219,7 @@ const MakeTransactionPage = () => {
           </select>
         </form>
 
-          <h2 class="display-3" style={{ color: colors["black-text"], fontSize: 22, justifyContent: "center", marginTop:10 }}>Balance: {balance}</h2>
+          <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
         
 
           <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
@@ -260,6 +260,12 @@ const styles = {
     height: 30, 
     justifyContent: "center"
   },
+  fineTextStyle: {
+    color: colors["black-text"],
+    fontSize: 22,
+    justifyContent: "center",
+    marginTop:10
+  }, 
   imgStyle: {
     width: 240,
     height: 200
