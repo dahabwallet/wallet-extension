@@ -10,13 +10,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { recoverPublicKey } from 'ethers/lib/utils';
 
-const abbreviations_map = new Map([
-    
-  ["casper", "CSPR"],
-  ["ethereum", "ETH"],
-  ["solana", "SOL"]
+const abbreviations_map = { 
 
-]);
+  "casper": "CSPR",
+  "ethereum": "ETH",
+  "solana": "SOL"
+
+}
+
 
 
 const balance_map= {
@@ -50,15 +51,10 @@ function DropdownForm(props) {
 
 const masterGetBalance=  (chain_name) =>{
 
-  let abbr= abbreviations_map.get(chain_name)
-  let priv_key= window.localStorage.getItem(`${abbr}_privateKey`);
-
+  let nearest_decimal= 4;
   
-  // console.log("private key: ", priv_key)
-  // console.log("abbr ", abbr)
-
   
-  return balance_map[chain_name]
+  return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal))
   // if (chain_name == 'casper')
   // return casperGetBalance();
 
@@ -103,7 +99,7 @@ const getAllBalances= async (chains) => {
   for (const chain_name of chains) {
     
       const chain_name_lower= chain_name.toLowerCase()
-      let abbr= abbreviations_map.get(chain_name_lower)
+      let abbr= abbreviations_map[chain_name_lower]
       let priv_key= window.localStorage.getItem(`${abbr}_privateKey`);
       
 
@@ -146,11 +142,13 @@ const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr,
     alert("Transaction Successful")
   
   }
+  
   catch(e) {
-    alert("Transaction Failed")
-
-    console.log(e)
-      
+    
+    let error_message= e.toString().split("(", 1)[0]
+    console.log("error message: ", error_message)
+    alert(`Transaction Failed: ${error_message}`)
+        
     } 
 }
 
@@ -165,7 +163,7 @@ const  masterSendTransaction = async (navigate, chain_name, receiver_addr, amoun
 
   chain_name= chain_name.toLowerCase()
 
-  let abbr= abbreviations_map.get(chain_name)
+  let abbr= abbreviations_map[chain_name]
   let sender_priv_key= window.localStorage.getItem(`${abbr}_privateKey`);
   
   try{
@@ -219,7 +217,7 @@ const MakeTransactionPage = () => {
           <form>
           <select 
           value={selected_chain} 
-          onChange={(e) => {setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map.get(e.target.value.toLowerCase())}`)}}>
+          onChange={(e) => {setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map[e.target.value.toLowerCase()]}`)}}>
             {chains.map((value) => (
               <option value={value} key={value}>
                 {value}
@@ -248,7 +246,7 @@ const styles = {
     backgroundColor: colors['grey-background'],
     flexDirection: "column",
     "font-family": 'Montserrat Alternates',
-    display: "flex",
+    display: "flex", 
     alignItems: "center",
     justifyContent: "center"
   },
