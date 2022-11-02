@@ -1,11 +1,8 @@
 import { ethers } from "ethers"
 
-async function send_transaction(sender_priv_key, receiver_pub_key, amount){
+async function ethSendTransaction(sender_priv_key, receiver_pub_key, amount){
     
-    // console.log("omar: ", sender_priv_key)
-    console.log("sender private key: ", sender_priv_key)
-    console.log("receiver addr: ", receiver_pub_key)
-    console.log("amount: ", amount)
+    
     let provider= new ethers.providers.getDefaultProvider("goerli")
 
    let  walletPrivKey= new ethers.Wallet(sender_priv_key)
@@ -26,6 +23,6 @@ async function send_transaction(sender_priv_key, receiver_pub_key, amount){
 
 }
 
-export default send_transaction
+export default ethSendTransaction
 
 

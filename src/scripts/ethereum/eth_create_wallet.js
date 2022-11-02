@@ -1,4 +1,4 @@
-import store_keypair from "./store_keypair";
+import store_keypair from "../store_keypair";
 import { ethers } from "ethers"
 
 const create_wallet = () => {

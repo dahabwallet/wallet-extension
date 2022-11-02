@@ -21,9 +21,6 @@ function App() {
         <Route path="/wallet" element={<MakeTransaction />} />
         <Route path="/transaction-successful" element={<TransactionSuccessful />} />
         <Route path="/report" element={<Report />} />
-
-
-
       </Routes>
     </Router>
   );
