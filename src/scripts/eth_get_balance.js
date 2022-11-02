@@ -8,6 +8,7 @@ async function ethGetBalance(sender_priv_key){
 
     const wallet = walletPrivKey.connect(provider)
     let wallet_balance= await wallet.getBalance()
+    wallet_balance= ethers.utils.formatEther(wallet_balance)
     console.log ("wallet_balance: ", wallet_balance)
 
     return wallet_balance

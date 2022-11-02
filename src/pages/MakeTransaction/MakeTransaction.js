@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
@@ -18,16 +19,23 @@ const abbreviations_map = new Map([
 ]);
 
 
+const balance_map= {
+  "casper": 4000, 
+  "ethereum":0.0222586,
+  "solana": 120.526
+}
+
+
 function DropdownForm(props) {
   const chains = props.chains
 
-  const [selected, setSelected] = useState(chains[0]);
+  const [selected_chain, setSelectedChain] = useState(chains[0]);
 
   return (
     <form>
       <select 
-       value={selected} 
-       onChange={e => setSelected(e.target.value)}>
+       value={selected_chain} 
+       onChange={e => setSelectedChain(e.target.value)}>
         {chains.map((value) => (
           <option value={value} key={value}>
             {value}
@@ -38,47 +46,41 @@ function DropdownForm(props) {
   );
 }
 
-function casperGetBalance(){
-  return 4000;
-}
 
-function ethereumGetBalance(){
-  return 0.0222586;
-}
-function solanaGetBalance(){
-  return 120.526;
-}
 
 const masterGetBalance=  (chain_name) =>{
 
   let abbr= abbreviations_map.get(chain_name)
   let priv_key= window.localStorage.getItem(`${abbr}_privateKey`);
+
+  
   // console.log("private key: ", priv_key)
   // console.log("abbr ", abbr)
 
   
-  if (chain_name == 'casper')
-  return casperGetBalance();
+  return balance_map[chain_name]
+  // if (chain_name == 'casper')
+  // return casperGetBalance();
 
-  if (chain_name == 'ethereum')
-    // return  ethGetBalance(priv_key);
-    return ethereumGetBalance();
+  // if (chain_name == 'ethereum')
+  //   return  ethGetBalance(priv_key);
+  //   // return ethereumGetBalance();
   
-  if (chain_name == 'solana')
-  return solanaGetBalance();
+  // if (chain_name == 'solana')
+  // return solanaGetBalance();
 
 }
 
 // function DropdownForm(props) {
 //   const chains = props.chains
-//   const [selected, setSelected] = useState(chains[0]);
+//   const [selected, setSelectedChain] = useState(chains[0]);
 //   return (
-//     <Dropdown OnClick={e => setSelected(e.target.value)}>
+//     <Dropdown OnClick={e => setSelectedChain(e.target.value)}>
       
-//         <Dropdown.Toggle value={selected} OnClick={e => setSelected(e.target.value)} variant="success">
+//         <Dropdown.Toggle value={selected} OnClick={e => setSelectedChain(e.target.value)} variant="success">
 //         {selected} 
 //         </Dropdown.Toggle>
-//         <Dropdown.Menu value={selected}  OnClick={e => setSelected(e.target.value)}>
+//         <Dropdown.Menu value={selected}  OnClick={e => setSelectedChain(e.target.value)}>
 //         {chains.map((value) => (
 //           <Dropdown.Item href='#'>
 //             {value}
@@ -90,6 +92,47 @@ const masterGetBalance=  (chain_name) =>{
    
 //   );
 // }
+
+
+
+const getAllBalances= async (chains) => {
+
+  console.log("get_all_balances executed . .  ")
+  
+
+  for (const chain_name of chains) {
+    
+      const chain_name_lower= chain_name.toLowerCase()
+      let abbr= abbreviations_map.get(chain_name_lower)
+      let priv_key= window.localStorage.getItem(`${abbr}_privateKey`);
+      
+
+      if (chain_name_lower == 'casper')
+          balance_map[chain_name_lower]=  900;
+
+      else if (chain_name_lower == 'ethereum'){
+
+          let eth_balance= await ethGetBalance(priv_key)
+          balance_map[chain_name_lower]=  eth_balance
+          // balance_map[chain_name_lower]=  0.000000235
+
+      }
+         
+
+      else if (chain_name_lower == 'solana')
+           balance_map[chain_name_lower]=  37
+
+
+
+
+  }
+
+
+
+
+
+
+}
 
 function casperSendTransaction(sender_priv_key, receiver_addr, amount){
   alert("casper send");
@@ -141,8 +184,8 @@ const  masterSendTransaction = async (navigate, chain_name, receiver_addr, amoun
   
   }
   catch(e) {
-    alert("Transaction Failed")
 
+    alert("Transaction Failed")
     console.log(e)
       
     } 
@@ -151,50 +194,52 @@ const  masterSendTransaction = async (navigate, chain_name, receiver_addr, amoun
 
 
 const MakeTransactionPage = () => {
-  const [receiver_addr, set_receiver_addr] = useState("");
-  const [amount, setAmount] = useState("");
-  const chains = ["Casper", "Solana", "Ethereum"];
-  const [balance, setBalance]= useState(masterGetBalance(chains[0].toLowerCase()))
-  const [amount_str, setAmountStr]= useState("Amount in CSPR")
+      const [receiver_addr, set_receiver_addr] = useState("");
+      const [amount, setAmount] = useState("");
+      const chains = ["Casper", "Ethereum", "Solana"];
+      const [balance, setBalance]= useState(masterGetBalance(chains[0].toLowerCase()))
+      const [amount_str, setAmountStr]= useState("Amount in CSPR")
+
+      let navigate = useNavigate();
 
 
-  let navigate = useNavigate();
-  
+      useEffect(()=>{getAllBalances(chains);},[])
 
-  const [selected, setSelected] = useState(chains[0]);
+      
 
-  return (
-    <div style={styles.parentStyle}>
+      const [selected_chain, setSelectedChain] = useState(chains[0]);
+      
 
-      <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
-      <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
+      return (
+        <div style={styles.parentStyle}>
 
-      <DropdownForm chains= {chains}></DropdownForm>
+          <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
+          <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
 
-      <form>
-      <select 
-       value={selected} 
-       onChange={(e) => {setSelected(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map.get(e.target.value.toLowerCase())}`)}}>
-        {chains.map((value) => (
-          <option value={value} key={value}>
-            {value}
-          </option>
-        ))}
-      </select>
-    </form>
+          <form>
+          <select 
+          value={selected_chain} 
+          onChange={(e) => {setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map.get(e.target.value.toLowerCase())}`)}}>
+            {chains.map((value) => (
+              <option value={value} key={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </form>
 
-      <h2 class="display-3" style={{ color: colors["black-text"] }}>Balance: {balance}</h2>
-    
+          <h2 class="display-3" style={{ color: colors["black-text"] }}>Balance: {balance}</h2>
+        
 
-      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
-      <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
+          <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
+          <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
 
-      <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected, receiver_addr, amount)}>
-        Send Transaction
-      </button>
-    </div >
+          <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected_chain, receiver_addr, amount)}>
+            Send Transaction
+          </button>
+        </div >
 
-  );
+      );
 }
 const styles = {
   parentStyle: {
