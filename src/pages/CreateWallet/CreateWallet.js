@@ -3,7 +3,7 @@ import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import meets_password_criteria from "../../scripts/meets_password_criteria"
 import store_password from "../../scripts/store_password"
-import create_wallet from "../../scripts/create_wallet"
+import create_wallet from "../../scripts/ethereum/eth_create_wallet"
 
 const create_wallet_local = (password) => {
   if (meets_password_criteria(password)) {

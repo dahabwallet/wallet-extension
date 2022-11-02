@@ -3,12 +3,11 @@ import { useState, useEffect } from 'react';
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
-import send_transaction from "../../scripts/make_transfer_transaction"
-import ethGetBalance from "../../scripts/eth_get_balance"
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
+import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
 
 import 'bootstrap/dist/css/bootstrap.css';
-import Dropdown from 'react-bootstrap/Dropdown';
-import { recoverPublicKey } from 'ethers/lib/utils';
+
 
 const abbreviations_map = { 
 
@@ -27,67 +26,17 @@ const balance_map= {
 }
 
 
-function DropdownForm(props) {
-  const chains = props.chains
 
-  const [selected_chain, setSelectedChain] = useState(chains[0]);
-
-  return (
-    <form>
-      <select 
-       value={selected_chain} 
-       onChange={e => setSelectedChain(e.target.value)}>
-        {chains.map((value) => (
-          <option value={value} key={value}>
-            {value}
-          </option>
-        ))}
-      </select>
-    </form>
-  );
-}
 
 
 
 const masterGetBalance=  (chain_name) =>{
 
   let nearest_decimal= 4;
-  
-  
   return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal))
-  // if (chain_name == 'casper')
-  // return casperGetBalance();
-
-  // if (chain_name == 'ethereum')
-  //   return  ethGetBalance(priv_key);
-  //   // return ethereumGetBalance();
-  
-  // if (chain_name == 'solana')
-  // return solanaGetBalance();
 
 }
 
-// function DropdownForm(props) {
-//   const chains = props.chains
-//   const [selected, setSelectedChain] = useState(chains[0]);
-//   return (
-//     <Dropdown OnClick={e => setSelectedChain(e.target.value)}>
-      
-//         <Dropdown.Toggle value={selected} OnClick={e => setSelectedChain(e.target.value)} variant="success">
-//         {selected} 
-//         </Dropdown.Toggle>
-//         <Dropdown.Menu value={selected}  OnClick={e => setSelectedChain(e.target.value)}>
-//         {chains.map((value) => (
-//           <Dropdown.Item href='#'>
-//             {value}
-//           </Dropdown.Item>
-//         ))}
-          
-//         </Dropdown.Menu>
-//       </Dropdown>
-   
-//   );
-// }
 
 
 
@@ -110,8 +59,7 @@ const getAllBalances= async (chains) => {
 
           let eth_balance= await ethGetBalance(priv_key)
           balance_map[chain_name_lower]=  eth_balance
-          // balance_map[chain_name_lower]=  0.000000235
-
+          
       }
          
 
@@ -132,7 +80,7 @@ const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr,
 
   try{
     
-    await send_transaction(sender_priv_key, receiver_addr, amount);
+    await ethSendTransaction(sender_priv_key, receiver_addr, amount);
     navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
    
   
