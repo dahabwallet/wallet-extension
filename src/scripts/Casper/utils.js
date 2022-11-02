@@ -9,8 +9,8 @@ import {
     CLValueBuilder,
   } from 'casper-js-sdk';
 
-  import { CONNECTION, DEPLOYER_ACC } from '../CasperTransferParams';
-  import { PAYMENT_AMOUNTS } from '../CasperTransferParams';
+  import { CONNECTION, DEPLOYER_ACC } from '../Casper/CasperTransferParams';
+  import { PAYMENT_AMOUNTS } from '../Casper/CasperTransferParams';
 
   export function HexToCLPublicKey(publicKey: string) {
     console.log('Parsing public key string: ', publicKey);

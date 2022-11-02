@@ -2,25 +2,26 @@ import { useState } from 'react';
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
-import send_transaction from "../../scripts/make_transfer_transaction"
+// import send_transaction from "../../scripts/make_transfer_transaction"
+import send_transaction from "../../scripts/Casper/transfer_transaction"
 
 
-const  send_transaction_navigate = async (navigate, receiver_addr, amount) => {
+const send_transaction_navigate = async (navigate, receiver_addr, amount) => {
 
-    let sender_priv_key= window.localStorage.getItem('privateKey');
-    
-    try{
-      
-      await send_transaction(sender_priv_key, receiver_addr, amount);
-      alert("Transaction Successful")
-    
-    }
-    catch(e) {
-      alert("Transaction Failed")
+  let sender_priv_key = window.localStorage.getItem('CSPR_privateKey');
 
-      console.log(e)
-        
-      } 
+  try {
+
+    await send_transaction(sender_priv_key, receiver_addr, amount);
+    alert("Transaction Successful")
+
+  }
+  catch (e) {
+    alert("Transaction Failed")
+
+    console.log(e)
+
+  }
 }
 const MakeTransactionPage = () => {
   const [receiver_addr, set_receiver_addr] = useState("");
