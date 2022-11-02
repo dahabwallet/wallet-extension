@@ -139,7 +139,8 @@ const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr,
   try{
     
     await send_transaction(sender_priv_key, receiver_addr, amount);
-    alert("Transaction Successful")
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
+   
   
   }
   
@@ -147,7 +148,7 @@ const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr,
     
     let error_message= e.toString().split("(", 1)[0]
     console.log("error message: ", error_message)
-    alert(`Transaction Failed: ${error_message}`)
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
         
     } 
 }
