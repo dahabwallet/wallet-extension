@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import MakeTransaction from "./pages/MakeTransaction/MakeTransaction"
 import CreateWallet from "./pages/CreateWallet/CreateWallet";
+import CreateWalletCasper from "./pages/CreateWalletCasper/CreateWalletCasper";
+
 import privatekey_exists from "./scripts/privatekey_exists"
 import TransactionSuccessful from "./pages/MakeTransaction/TransactionSuccessful";
 
@@ -14,7 +16,7 @@ function App() {
       <Routes>
         {
           privatekey_exists() ? <Route path="/" element={<Login />} /> :
-            <Route path="/" element={<CreateWallet />} />
+            <Route path="/" element={<CreateWalletCasper />} />
             
         }
         <Route path="/wallet" element={<MakeTransaction />} />

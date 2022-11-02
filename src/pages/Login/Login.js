@@ -15,6 +15,8 @@ const login = (navigate, password) => {
   }
 }
 const LoginPage = () => {
+  console.log(`sender pub key: ${window.localStorage.getItem("sender_pub_key")}`);
+
   const [password, set_password] = useState("");
   let navigate = useNavigate();
   return (
@@ -26,7 +28,7 @@ const LoginPage = () => {
       <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, password)}>
         Login
       </button>
-    </div >
+    </div>
 
   );
 }
