@@ -5,18 +5,16 @@ import {
   Keys
 } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS, CONNECTION } from "./CasperTransferParams";
-import getBalance from "./get_balance"
 import { Buffer } from 'buffer'
 //to:   019807b7fa12ea5fb37abcc5e8ac0b8bbaed890341a9a647fcb892b13908d68073
 
-export async function send_transaction_casper(
+const send_transaction_casper = async (
   senderPrivateKey,
   receiverPublicAddress,
   amount
-) {
+) => {
   senderPrivateKey = new Uint8Array(Buffer.from(senderPrivateKey.split(',')))
 
-  getBalance().then(balance => console.log("Balance: ", balance))
   const MOTE_RATE = 1000000000;
   const TTL = 1800000;
 
@@ -52,10 +50,8 @@ export async function send_transaction_casper(
     CONNECTION.NODE_ADDRESS
   );
 
-
   return transferDeployHash;
 }
-
 
 
 export default send_transaction_casper

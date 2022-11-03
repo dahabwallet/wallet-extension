@@ -5,7 +5,6 @@ const create_wallet = () => {
 	let keypair = solanaWeb3.Keypair.generate();
 	let privateKey = keypair.secretKey.toString();
 	let publicKey = keypair.publicKey.toString()
-	console.log(`Your Public Key is: ${publicKey}`);
 	store_keypair("SOL", publicKey, privateKey);
 }
 
