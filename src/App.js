@@ -16,7 +16,7 @@ function App() {
         {
           privatekey_exists() ? <Route path="/" element={<Login />} /> :
             <Route path="/" element={<CreateWallet />} />
-            
+
         }
         <Route path="/wallet" element={<MakeTransaction />} />
         <Route path="/transaction-successful" element={<TransactionSuccessful />} />

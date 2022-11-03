@@ -59,7 +59,7 @@ const getAllBalances= async (chains) => {
 
           let eth_balance= await ethGetBalance(priv_key)
           balance_map[chain_name_lower]=  eth_balance
-          
+
       }
          
 
@@ -88,9 +88,9 @@ const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr,
   
   catch(e) {
     
-    let error_message= e.toString().split("(", 1)[0]
-    console.log("error message: ", error_message)
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+      let error_message= e.toString().split("(", 1)[0]
+      console.log("error message: ", error_message)
+      navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
         
     } 
 }
@@ -141,7 +141,7 @@ const MakeTransactionPage = () => {
       let navigate = useNavigate();
 
 
-      useEffect(()=>{getAllBalances(chains);},[])
+      useEffect(()=>{getAllBalances(chains);},[balance])
 
       
 
