@@ -15,8 +15,6 @@ const login = (navigate, password) => {
   }
 }
 const LoginPage = () => {
-  console.log(`Your public key: ${window.localStorage.getItem('SOL_publicKey')}`);
-  
   const [password, set_password] = useState("");
   let navigate = useNavigate();
   return (
