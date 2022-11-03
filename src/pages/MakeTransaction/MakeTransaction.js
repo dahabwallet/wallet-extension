@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import {RotatingLines} from  'react-loader-spinner'
 
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
@@ -85,12 +86,18 @@ const solanaSendTransaction = async (navigate, sender_priv_key, receiver_addr, a
 }
 
 
-const masterSendTransaction = async (navigate, chain_name, receiver_addr, amount) => {
+const masterSendTransaction = async (navigate, chain_name, receiver_addr, amount, setLoadingRing) => {
   chain_name = chain_name.toLowerCase()
   let abbr = abbreviations_map[chain_name]
   let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
 
   try {
+
+
+    setLoadingRing(true);
+    // await new Promise(r => setTimeout(r, 2000));
+    // setLoadingRing(false);
+
     if (chain_name == 'casper')
       casperSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
 
@@ -99,8 +106,11 @@ const masterSendTransaction = async (navigate, chain_name, receiver_addr, amount
 
     if (chain_name == 'solana')
       solanaSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
+    
+    //  setLoadingRing(false);
   }
   catch (e) {
+    setLoadingRing(false);
     navigate('/report', { state: { message: 'Transaction Failed', statusId: 2, page: 'wallet' } })
   }
 }
@@ -111,6 +121,7 @@ const MakeTransactionPage = () => {
   const chains = ["Casper", "Ethereum", "Solana"];
   const [balance, setBalance] = useState(masterGetBalance(chains[0].toLowerCase()))
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
+  const [loadingRing, setLoadingRing]= useState (false)
 
   let navigate = useNavigate();
 
@@ -145,9 +156,18 @@ const MakeTransactionPage = () => {
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
       <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
 
-      <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected_chain, receiver_addr, amount)}>
+      <RotatingLines
+        strokeColor="green"
+        strokeWidth="5"
+        animationDuration="0.75"
+        width="90"
+        visible={loadingRing} />
+
+      <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected_chain, receiver_addr, amount, setLoadingRing)}>
         Send Transaction
       </button>
+      
+
     </div >
 
   );
