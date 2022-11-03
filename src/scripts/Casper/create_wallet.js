@@ -1,19 +1,12 @@
-import { KeyFactory, EncryptionType, CasperHDWallet } from "casper-storage";
+import { Keys } from 'casper-js-sdk';
+
 import store_keypair from "../store_keypair";
 
 async function create_wallet_casper() {
-    const keyManager = KeyFactory.getInstance();
-    const masterKey = keyManager.generate();
-    const masterSeed = keyManager.toSeed(masterKey);
-
-    const hdWallet = new CasperHDWallet(masterSeed, EncryptionType.Ed25519);
-
-    const acc0 = await hdWallet.getAccount(0);
-
-    const privateKey = await acc0.getPrivateKey();
-    const publicKey = await acc0.getPublicKey();
-
-    store_keypair("CSPR", publicKey, privateKey);
+    const edKeyPair = Keys.Ed25519.new();
+    const { publicKey, privateKey } = edKeyPair;
+    // console.log(publicKey.toHex())
+    store_keypair("CSPR", publicKey.toHex(), privateKey.toString());
 }
 
 export default create_wallet_casper;

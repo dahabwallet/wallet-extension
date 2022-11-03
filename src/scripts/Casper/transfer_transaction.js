@@ -1,32 +1,30 @@
 import {
   CasperClient,
   CLPublicKey,
-  mapOwnerKeys,
   DeployUtil,
   Keys
 } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS, CONNECTION } from "./CasperTransferParams";
+import getBalance from "./get_balance"
+import { Buffer } from 'buffer'
+//to:   019807b7fa12ea5fb37abcc5e8ac0b8bbaed890341a9a647fcb892b13908d68073
 
 export async function send_transaction_casper(
   senderPrivateKey,
   receiverPublicAddress,
-  amount, //Amount
-  // isSignerTransfer = false,
-  ifHash = false,
+  amount
 ) {
-  const senderPublicKey = window.localStorage.getItem('CSPR_publicKey')
+  senderPrivateKey = new Uint8Array(Buffer.from(senderPrivateKey.split(',')))
+
+  getBalance().then(balance => console.log("Balance: ", balance))
   const MOTE_RATE = 1000000000;
   const TTL = 1800000;
 
   const privateKey = Keys.Ed25519.parsePrivateKey(senderPrivateKey)
-  const publicKey = Keys.Ed25519.privateToPublicKey(privateKey)
+  const publicKey = Keys.Ed25519.privateToPublicKey(senderPrivateKey)
   const signKeyPair = Keys.Ed25519.parseKeyPair(publicKey, privateKey);
 
-  console.log("==>", publicKey)
-
-  const fromAccount = CLPublicKey.fromHex(senderPublicKey);
-  console.log('=>', fromAccount)
-  const toAccount = ifHash ? receiverPublicAddress : CLPublicKey.fromHex(receiverPublicAddress);
+  const toAccount = CLPublicKey.fromHex(receiverPublicAddress);
   amount = parseInt(amount) * MOTE_RATE;
 
   const PAYMENT_AMOUNT = PAYMENT_AMOUNTS.NATIVE_TRANSFER_PAYMENT_AMOUNT;
@@ -46,40 +44,14 @@ export async function send_transaction_casper(
   const payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
 
   const deploy = DeployUtil.makeDeploy(deployParams, transferParams, payment);
-
-  // DeployUtil.deployToJson(deploy);
-
-  let signedDeployJson;
-
-  // if (isSignerTransfer) {
-  //   signedDeployJson = await Signer.sign(
-  //     deployJson,
-  //     senderPublicKey,
-  //     receiverPublicAddress
-  //   );
-
-  //   signedDeployJson = DeployUtil.deployFromJson(signedDeployJson).unwrap();
-  // } else {
-  console.log(3.1)
   const client = new CasperClient(CONNECTION.NODE_ADDRESS);
-  console.log(3.2)
-  // const KEYS_USER = await mapOwnerKeys();
-  // console.log(3.3)
-  // console.log(KEYS_USER)
-  console.log(3.4)
-  // console.log("Here: ", privateKey, publicKey)
 
-  console.log(signKeyPair)
-  console.log(3.5)
 
-  signedDeployJson = client.signDeploy(deploy, signKeyPair);
-  // }
-  console.log("here 4")
+  let signedDeployJson = client.signDeploy(deploy, signKeyPair);
   const transferDeployHash = await signedDeployJson.send(
     CONNECTION.NODE_ADDRESS
   );
 
-  console.log("here 5")
 
   return transferDeployHash;
 }
