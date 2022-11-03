@@ -9,7 +9,6 @@ import {
 import { CONNECTION } from '../Casper/CasperTransferParams';
 
 export function HexToCLPublicKey(publicKey: string) {
-  console.log('Parsing public key string: ', publicKey);
   return CLPublicKey.fromHex(publicKey);
 }
 
@@ -126,7 +125,6 @@ export const getAccountBalance: any = async (publicKey: string) => {
     balanceUref
   );
 
-  console.log(balance / MOTE_RATE);
 
   return balance / MOTE_RATE;
 };
