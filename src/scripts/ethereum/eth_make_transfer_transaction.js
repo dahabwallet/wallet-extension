@@ -1,6 +1,7 @@
 import { ethers } from "ethers"
 
-async function send_transaction(sender_priv_key, receiver_pub_key, amount){
+async function ethSendTransaction(sender_priv_key, receiver_pub_key, amount){
+    
     
     let provider= new ethers.providers.getDefaultProvider("goerli")
 
@@ -22,6 +23,6 @@ async function send_transaction(sender_priv_key, receiver_pub_key, amount){
 
 }
 
-export default send_transaction
+export default ethSendTransaction
 
 
