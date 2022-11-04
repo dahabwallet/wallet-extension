@@ -29,29 +29,6 @@ const masterGetBalance = (chain_name) => {
   return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal))
 }
 
-const getAllBalances = async (chains) => {
-  for (const chain_name of chains) {
-    const chain_name_lower = chain_name.toLowerCase()
-    let abbr = abbreviations_map[chain_name_lower]
-    let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-    let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
-
-    if (chain_name_lower == 'casper') {
-      let cspr_balance = await csprGetBalance()
-      balance_map[chain_name_lower] = cspr_balance
-    }
-    else if (chain_name_lower == 'ethereum') {
-      let eth_balance = await ethGetBalance(priv_key)
-      balance_map[chain_name_lower] = eth_balance
-    }
-    else if (chain_name_lower == 'solana') {
-      let sol_balance = await solGetBalance(pub_key)
-      balance_map[chain_name_lower] = sol_balance
-    }
-  }
-}
-
-
 const getSelectedChainBalance = async(selected_chain) => {
   const chain_name_lower = selected_chain.toLowerCase();
   let abbr = abbreviations_map[chain_name_lower];
@@ -74,63 +51,6 @@ const getSelectedChainBalance = async(selected_chain) => {
     default:
       console.log(`Chain Not Found`);
   }
-}
-
-
-const casperSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
-  try {
-    await csprSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-  }
-}
-
-const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
-  try {
-    await ethSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-  }
-}
-
-const solanaSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
-  try {
-    await solSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-  }
-}
-
-
-const masterSendTransaction = async (navigate, chain_name, receiver_addr, amount) => {
-
-  chain_name = chain_name.toLowerCase()
-  let abbr = abbreviations_map[chain_name]
-  let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-
-  try {
-    if (chain_name == 'casper')
-      casperSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
-
-    if (chain_name == 'ethereum')
-      ethereumSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
-
-    if (chain_name == 'solana')
-      solanaSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
-  }
-  catch (e) {
-    navigate('/report', { state: { message: 'Transaction Failed', statusId: 2, page: 'wallet' } })
-  }
-  
 }
 
 const MakeTransactionPage = () => {
@@ -202,9 +122,6 @@ const MakeTransactionPage = () => {
 
   }
 
-  //getAllBalances(chains);
-  // useEffect(() => { getAllBalances(chains); }, [])
-
   const [selected_chain, setSelectedChain] = useState(chains[0]);
 
   getSelectedChainBalance(selected_chain);
@@ -214,7 +131,6 @@ const MakeTransactionPage = () => {
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
-
       <form>
         <select
           style={styles.dropDownStyle}
@@ -235,9 +151,8 @@ const MakeTransactionPage = () => {
 
       <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
 
-
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
-     <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
+      <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
           
       <button className='btn' style={styles.btnStyle} onClick={transferTransaction}>
         Send Transaction
