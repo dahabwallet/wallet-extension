@@ -51,6 +51,28 @@ const getAllBalances = async (chains) => {
   }
 }
 
+
+const getSelectedChainBalance = async(selected_chain) => {
+  const chain_name_lower = selected_chain.toLowerCase();
+  let abbr = abbreviations_map[chain_name_lower];
+  let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
+  let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
+
+  if (chain_name_lower == 'casper') {
+    let cspr_balance = await csprGetBalance();
+    balance_map[chain_name_lower] = cspr_balance;
+  }
+  else if (chain_name_lower == 'ethereum') {
+    let eth_balance = await ethGetBalance(priv_key);
+    balance_map[chain_name_lower] = eth_balance;
+  }
+  else if (chain_name_lower == 'solana') {
+    let sol_balance = await solGetBalance(pub_key);
+    balance_map[chain_name_lower] = sol_balance;
+  }
+}
+
+
 const casperSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
   try {
     await csprSendTransaction(sender_priv_key, receiver_addr, amount);
@@ -114,10 +136,12 @@ const MakeTransactionPage = () => {
 
   let navigate = useNavigate();
 
-  getAllBalances(chains);
+  //getAllBalances(chains);
   // useEffect(() => { getAllBalances(chains); }, [])
 
   const [selected_chain, setSelectedChain] = useState(chains[0]);
+
+  getSelectedChainBalance(selected_chain);
 
   return (
     <div style={styles.parentStyle}>
