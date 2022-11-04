@@ -58,17 +58,21 @@ const getSelectedChainBalance = async(selected_chain) => {
   let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
   let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
 
-  if (chain_name_lower == 'casper') {
-    let cspr_balance = await csprGetBalance();
-    balance_map[chain_name_lower] = cspr_balance;
-  }
-  else if (chain_name_lower == 'ethereum') {
-    let eth_balance = await ethGetBalance(priv_key);
-    balance_map[chain_name_lower] = eth_balance;
-  }
-  else if (chain_name_lower == 'solana') {
-    let sol_balance = await solGetBalance(pub_key);
-    balance_map[chain_name_lower] = sol_balance;
+  switch(chain_name_lower) {
+    case 'casper':
+      let cspr_balance = await csprGetBalance();
+      balance_map[chain_name_lower] = cspr_balance;
+      break;
+    case 'ethereum':
+      let eth_balance = await ethGetBalance(priv_key);
+      balance_map[chain_name_lower] = eth_balance;
+      break;
+    case 'solana':
+      let sol_balance = await solGetBalance(pub_key);
+      balance_map[chain_name_lower] = sol_balance;
+      break;
+    default:
+      console.log(`Chain Not Found`);
   }
 }
 
