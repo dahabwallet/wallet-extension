@@ -12,7 +12,7 @@ const send_transaction_casper = async (
   receiverPublicAddress,
   amount
 ) => {
-  console.log('start casper')
+  
   senderPrivateKey = new Uint8Array(Buffer.from(senderPrivateKey.split(',')))
 
   const MOTE_RATE = 1000000000;
@@ -50,7 +50,6 @@ const send_transaction_casper = async (
     CONNECTION.NODE_ADDRESS
   );
 
-  console.log('end casper')
 
   return transferDeployHash;
 }
