@@ -6,14 +6,13 @@ import {
 } from 'casper-js-sdk';
 import { PAYMENT_AMOUNTS, CONNECTION } from "./CasperTransferParams";
 import { Buffer } from 'buffer'
-//to:   019807b7fa12ea5fb37abcc5e8ac0b8bbaed890341a9a647fcb892b13908d68073
 
 const send_transaction_casper = async (
   senderPrivateKey,
   receiverPublicAddress,
   amount
 ) => {
-
+  console.log('start casper')
   senderPrivateKey = new Uint8Array(Buffer.from(senderPrivateKey.split(',')))
 
   const MOTE_RATE = 1000000000;
@@ -50,6 +49,8 @@ const send_transaction_casper = async (
   const transferDeployHash = await signedDeployJson.send(
     CONNECTION.NODE_ADDRESS
   );
+
+  console.log('end casper')
 
   return transferDeployHash;
 }
