@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { RotatingLines } from 'react-loader-spinner'
 
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
@@ -18,113 +19,79 @@ const abbreviations_map = {
   "solana": "SOL"
 }
 
-const balance_map = {
-  "casper": 0,
-  "ethereum": 0,
-  "solana": 0
+const parseBalance = (balance) => {
+  let nearest_decimal = 6;
+  return Number(parseFloat(balance).toFixed(nearest_decimal))
 }
-
-const masterGetBalance = (chain_name) => {
-  let nearest_decimal = 4;
-  return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal))
-}
-
-const getSelectedChainBalance = async(selected_chain) => {
-  const chain_name_lower = selected_chain.toLowerCase();
+const getSelectedChainBalance = async (selectedChain) => {
+  const chain_name_lower = selectedChain.toLowerCase();
   let abbr = abbreviations_map[chain_name_lower];
   let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
   let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
 
-  switch(chain_name_lower) {
+  switch (chain_name_lower) {
     case 'casper':
       let cspr_balance = await csprGetBalance();
-      balance_map[chain_name_lower] = cspr_balance;
-      break;
+      return cspr_balance
     case 'ethereum':
       let eth_balance = await ethGetBalance(priv_key);
-      balance_map[chain_name_lower] = eth_balance;
-      break;
+      return eth_balance
     case 'solana':
       let sol_balance = await solGetBalance(pub_key);
-      balance_map[chain_name_lower] = sol_balance;
-      break;
+      return sol_balance
     default:
       console.log(`Chain Not Found`);
   }
 }
 
+const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading) => {
+  try {
+
+    let chain_name = selectedChain.toLowerCase()
+    let abbr = abbreviations_map[chain_name]
+    let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
+    setLoading(true)
+    switch (selectedChain) {
+      case 'Casper':
+        await csprSendTransaction(sender_priv_key, receiverAddr, amount)
+        break;
+      case 'Ethereum':
+        await ethSendTransaction(sender_priv_key, receiverAddr, amount);
+        break;
+      case 'Solana':
+        await solSendTransaction(sender_priv_key, receiverAddr, amount)
+        break;
+    }
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
+  } catch (e) {
+    let error_message = e.toString().split("(", 1)[0]
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+  }
+  setLoading(false)
+}
+
 const MakeTransactionPage = () => {
-  const [receiver_addr, set_receiver_addr] = useState("");
+  const [receiverAddr, setReceiverAddr] = useState("");
   const [amount, setAmount] = useState("");
   const chains = ["Casper", "Ethereum", "Solana"];
-  const [balance, setBalance] = useState(masterGetBalance(chains[0].toLowerCase()))
+  const [balance, setBalance] = useState('-')
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
-  const [transferTransaction, settransferTransaction] = useState(() => () => console.log("default ooops"));
+  const [loadingRing, setLoadingRing] = useState(false)
 
   let navigate = useNavigate();
 
-  async function handleOnChange(e) {
-    setSelectedChain(e.target.value);
-    let current_chain = e.target.value;
-    console.log("target val:", e.target.value);
-    setBalance(masterGetBalance(e.target.value.toLowerCase()));
-    setAmountStr(`Amount in ${abbreviations_map[e.target.value.toLowerCase()]}`);
 
-    let chain_name = current_chain.toLowerCase()
-    let abbr = abbreviations_map[chain_name]
-    let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-  
-    switch(e.target.value) {
-      case 'Casper':
-        settransferTransaction(() => () => {
-          try {
-             csprSendTransaction(sender_priv_key, receiver_addr, amount).then(() => {
-              navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-             });
-          }
-          catch (e) {
-            let error_message = e.toString().split("(", 1)[0]
-            navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-          }
-        });
-        break;
-      case 'Ethereum':
-        settransferTransaction(() => () => {
-          try {
-            console.log("Ethreeee");
-            ethSendTransaction(sender_priv_key, receiver_addr, amount).then(() => {
-              navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-            });
-          }
-          catch (e) {
-            let error_message = e.toString().split("(", 1)[0]
-            navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-          }
-        });
-        break;
-      case 'Solana':
-        settransferTransaction(() => () => {
-          try {
-            solSendTransaction(sender_priv_key, receiver_addr, amount).then(() => {
-              navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-            });
-          }
-          catch (e) {
-            let error_message = e.toString().split("(", 1)[0]
-            navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
-          }
-        });
-      default:
-        console.log("switch magic default");
+  const [selectedChain, setSelectedChain] = useState(chains[0]);
+
+  useEffect(() => {
+    async function getBalance() {
+      setBalance('-')
+      let balance = await getSelectedChainBalance(selectedChain)
+      setBalance(parseBalance(balance))
     }
-
-    console.log(`selected chain is: ${current_chain}`);
-
-  }
-
-  const [selected_chain, setSelectedChain] = useState(chains[0]);
-
-  getSelectedChainBalance(selected_chain);
+    getBalance()
+    setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
+  }, [selectedChain])
 
   return (
     <div style={styles.parentStyle}>
@@ -134,13 +101,11 @@ const MakeTransactionPage = () => {
       <form>
         <select
           style={styles.dropDownStyle}
-          value={selected_chain}
-          onChange={
-            (e) => {
-              handleOnChange(e)
-            }
-            
-            }>
+          value={selectedChain}
+          onChange={e => {
+            setSelectedChain(e.target.value)
+          }}
+        >
           {chains.map((value) => (
             <option value={value} key={value}>
               {value}
@@ -151,10 +116,22 @@ const MakeTransactionPage = () => {
 
       <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
 
-      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
-      <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
-          
-      <button className='btn' style={styles.btnStyle} onClick={transferTransaction}>
+      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
+      <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
+        setAmount(e.target.value)
+      }}
+      />
+      <RotatingLines
+        strokeColor="green"
+        strokeWidth="5"
+        animationDuration="0.75"
+        width="90"
+        visible={loadingRing} />
+      <button className='btn' style={styles.btnStyle} onClick={() => {
+        setLoadingRing(true)
+        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
+      }
+      }>
         Send Transaction
       </button>
 
