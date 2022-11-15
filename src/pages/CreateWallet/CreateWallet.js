@@ -14,6 +14,7 @@ const create_wallet_local = (password) => {
     create_wallet_cspr();
     create_wallet_sol();
     create_wallet_eth();
+    // create_wallet_polygon()
     window.location.reload();
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
