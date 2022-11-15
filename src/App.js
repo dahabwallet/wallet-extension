@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import MakeTransaction from "./pages/MakeTransaction/MakeTransaction"
+import Swap from "./pages/Swap/Swap"
 import CreateWallet from "./pages/CreateWallet/CreateWallet";
 import privatekey_exists from "./scripts/privatekey_exists"
 import Report from "./pages/Report/Report";
@@ -18,6 +19,7 @@ function App() {
 
         }
         <Route path="/wallet" element={<MakeTransaction />} />
+        <Route path="/swap" element={<Swap />} />
         <Route path="/report" element={<Report />} />
       </Routes>
     </Router>

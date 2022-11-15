@@ -4,23 +4,21 @@ import { RotatingLines } from 'react-loader-spinner'
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
 import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
 import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
-import maticSendTransaction from "../../scripts/Polygon/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
-
-
+// import polygonGetBalance from ""
+// LINE 165 CHANGE THE SET ADDRESS FUNCTION
 import 'bootstrap/dist/css/bootstrap.css';
 
 const abbreviations_map = {
   "casper": "CSPR",
   "ethereum": "ETH",
   "solana": "SOL",
-  "polygon": "MATIC"
+  "polygon":"MATIC"
 }
 
 const parseBalance = (balance) => {
@@ -44,15 +42,14 @@ const getSelectedChainBalance = async (selectedChain) => {
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
     case 'polygon':
-      let matic_balance =
-        // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
-        await getPolygonMaticBalance(priv_key);
-      return matic_balance
+      let polygon_balance = await solGetBalance(pub_key);
+      return polygon_balance
     default:
       console.log(`Chain Not Found`);
   }
 }
 
+/* REPLACE WITH SWAP FUNCTION
 const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading) => {
   try {
 
@@ -71,9 +68,7 @@ const transferTransaction = async (selectedChain, receiverAddr, amount, navigate
         await solSendTransaction(sender_priv_key, receiverAddr, amount)
         break;
       case 'Polygon':
-        await maticSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      default:
+       // await polygonSendTransaction(sender_priv_key, receiverAddr, amount)
         break;
     }
     navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
@@ -82,42 +77,57 @@ const transferTransaction = async (selectedChain, receiverAddr, amount, navigate
     navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
   }
   setLoading(false)
-}
+}*/
 
-const MakeTransactionPage = () => {
+const SwapPage = () => {
   const [receiverAddr, setReceiverAddr] = useState("");
   const [amount, setAmount] = useState("");
   const chains = ["Casper", "Ethereum", "Solana", "Polygon"];
-  const [balance, setBalance] = useState('-')
-  const [amount_str, setAmountStr] = useState("Amount in CSPR")
+  const [balanceFrom, setBalanceFrom] = useState('-')
+  const [balanceTo, setBalanceTo] = useState('-')
+  const [amount_str, setAmountStr] = useState("to")
   const [loadingRing, setLoadingRing] = useState(false)
 
   let navigate = useNavigate();
 
 
-  const [selectedChain, setSelectedChain] = useState(chains[0]);
+  const [selectedChainFrom, setSelectedChainFrom] = useState(chains[0]);
+  const [selectedChainTo, setSelectedChainTo] = useState(chains[1]);
+  useEffect(() => {
+    async function getBalanceFrom() {
+      setBalanceFrom('-')
+      let balanceFrom = await getSelectedChainBalance(selectedChainFrom)
+      setBalanceFrom(parseBalance(balanceFrom))
+    }
+    getBalanceFrom()
+  
+    setAmountStr(`Amount in ${abbreviations_map[selectedChainFrom.toLowerCase()]}`);
+  }, [selectedChainFrom])
 
   useEffect(() => {
-    async function getBalance() {
-      setBalance('-')
-      let balance = await getSelectedChainBalance(selectedChain)
-      setBalance(parseBalance(balance))
+    async function getBalanceTo() {
+      setBalanceTo('-')
+      let balanceTo = await getSelectedChainBalance(selectedChainTo)
+      setBalanceTo(parseBalance(balanceTo))
     }
-    getBalance()
-    setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
-  }, [selectedChain])
+    getBalanceTo()
+  
+    setAmountStr(`Amount in ${abbreviations_map[selectedChainFrom.toLowerCase()]}`);
+  }, [selectedChainTo])
+
 
   return (
     <div style={styles.parentStyle}>
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
+      <h4 class="display-6" style={{ color: colors["black-text"] }}>Swap Page</h4>
       <form>
         <select
           style={styles.dropDownStyle}
-          value={selectedChain}
+          value={selectedChainFrom}
           onChange={e => {
-            setSelectedChain(e.target.value)
+            setSelectedChainFrom(e.target.value)
           }}
         >
           {chains.map((value) => (
@@ -128,13 +138,32 @@ const MakeTransactionPage = () => {
         </select>
       </form>
 
-      <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
+      
 
-      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
-      <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
-        setAmount(e.target.value)
-      }}
-      />
+      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainFrom} Balance: {balanceFrom}</h2>
+
+      <form>
+        <select
+          style={styles.dropDownStyle}
+          value={selectedChainTo}
+          onChange={e => {
+            setSelectedChainTo(e.target.value)
+          }}
+        >
+          {chains.map((value) => (
+            <option value={value} key={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </form>
+
+      
+
+      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainTo} Balance: {balanceFrom}</h2>
+    
+      <MDBInput label='Amount in Home Chain Native Currency' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} /> 
+      
       <RotatingLines
         strokeColor="green"
         strokeWidth="5"
@@ -143,20 +172,12 @@ const MakeTransactionPage = () => {
         visible={loadingRing} />
       <button className='btn' style={styles.btnStyle} onClick={() => {
         setLoadingRing(true)
-        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
+        //transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
       }
       }>
-        Send Transaction
+        Swap
       </button>
-<br></br>
-<a href="../swap">
-      <button className='btn' style={styles.btnStyle} onClick={() => {
-        setLoadingRing(true)
-        
-      }
-      }>
-        Want to Swap?
-      </button></a>
+
     </div >
 
   );
@@ -200,4 +221,4 @@ const styles = {
     height: 200
   }
 }
-export default MakeTransactionPage;
+export default SwapPage;
