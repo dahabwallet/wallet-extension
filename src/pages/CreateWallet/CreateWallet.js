@@ -7,6 +7,7 @@ import store_password from "../../scripts/store_password"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
+import create_wallet_polygon from "../../scripts/Polygon/create_wallet"
 
 const create_wallet_local = (password) => {
   if (meets_password_criteria(password)) {
@@ -14,6 +15,7 @@ const create_wallet_local = (password) => {
     create_wallet_cspr();
     create_wallet_sol();
     create_wallet_eth();
+    create_wallet_polygon();
     window.location.reload();
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")

@@ -21,7 +21,7 @@ const LoginPage = () => {
     <div style={styles.parentStyle}>
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
-      <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
+      <h1 className="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <MDBInput label='Password' type='password' size='lg' onChange={e => set_password(e.target.value)} />
       <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, password)}>
         Login
