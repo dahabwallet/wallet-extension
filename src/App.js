@@ -5,7 +5,6 @@ import MakeTransaction from "./pages/MakeTransaction/MakeTransaction"
 import CreateWallet from "./pages/CreateWallet/CreateWallet";
 import privatekey_exists from "./scripts/privatekey_exists"
 import Report from "./pages/Report/Report";
-
 // import privatekey_exists from "../../scripts/privatekey_exists"
 
 function App() {
@@ -18,7 +17,8 @@ function App() {
 
         }
         <Route path="/wallet" element={<MakeTransaction />} />
-        <Route path="/report" element={<Report />} />
+        <Route path="/report" element={<Report />} />        
+
       </Routes>
     </Router>
   );
