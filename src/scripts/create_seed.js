@@ -1,4 +1,4 @@
-import "bip39";
+const bip39 = require("bip39");
 
 function create_seed(master_mnemonic){
 
