@@ -4,6 +4,8 @@ import { MDBInput } from 'mdb-react-ui-kit';
 import meets_password_criteria from "../../scripts/meets_password_criteria"
 import store_password from "../../scripts/store_password"
 
+import create_mnemonic from "../../scripts/create_mnemonic"
+import create_seed from "../../scripts/create_seed"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
@@ -11,9 +13,11 @@ import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
 const create_wallet_local = (password) => {
   if (meets_password_criteria(password)) {
     store_password(password);
+    const my_mnemonic = create_mnemonic();
+    const my_seed = create_seed(my_mnemonic);
     create_wallet_cspr();
-    create_wallet_sol();
-    create_wallet_eth();
+    create_wallet_sol(my_seed);
+    create_wallet_eth(my_mnemonic);
     window.location.reload();
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
