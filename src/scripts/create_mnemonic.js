@@ -5,7 +5,7 @@ function create_mnemonics(){
     const mnemonic1 = bip39.generateMnemonic()
     const mnemonic2 = bip39.generateMnemonic()
     const mnemonic = mnemonic1+mnemonic2;
-    return(mnemonic)
+    return(mnemonic1)
 
 }
 

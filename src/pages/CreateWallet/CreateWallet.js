@@ -14,11 +14,17 @@ const create_wallet_local = (password) => {
   if (meets_password_criteria(password)) {
     store_password(password);
     const my_mnemonic = create_mnemonic();
-    const my_seed = create_seed(my_mnemonic);
+    let ret_seed = null;
+    const my_seed = create_seed(my_mnemonic)      
     create_wallet_cspr();
-    create_wallet_sol(my_seed);
+    console.log(`My mnemonic: ${my_mnemonic}`);
+
+    console.log(`My seed: ${my_seed}`);
+
+    create_wallet_sol(my_seed.toString().slice(0,32));
     create_wallet_eth(my_mnemonic);
-    window.location.reload();
+    window.location.reload(); 
+
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
   }
