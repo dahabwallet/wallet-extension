@@ -2,9 +2,9 @@ import store_keypair from "../store_keypair";
 import { ethers } from "ethers"
 
 const create_wallet = () => {
-	const wallet = ethers.Wallet.createRandom();
-	const privateKey = wallet._signingKey().privateKey;
-	const publicKey = wallet.address;
+	//Uses the same keys as Ethereum 
+	const privateKey = window.localStorage.getItem('ETH_privateKey');
+	const publicKey = window.localStorage.getItem('ETH_publicKey');
 	store_keypair("MATIC", publicKey, privateKey)
 }
 
