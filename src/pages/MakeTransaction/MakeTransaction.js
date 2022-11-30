@@ -11,7 +11,8 @@ import maticSendTransaction from "../../scripts/Polygon/make_transfer_transactio
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-import maticGetBalance from "../../scripts/Polygon/get_balance"
+import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
+
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -43,7 +44,9 @@ const getSelectedChainBalance = async (selectedChain) => {
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
     case 'polygon':
-      let matic_balance = await maticGetBalance(priv_key);
+      let matic_balance =
+        // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
+        await getPolygonMaticBalance(pub_key);
       return matic_balance
     default:
       console.log(`Chain Not Found`);
