@@ -59,7 +59,7 @@ const getPolygonWethBalance = async (privateKey, publicKey) => {
   const erc20Token = posClient.erc20("0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");//weth's token on mumbai
   const wallet_balance = await erc20Token.getBalance(publicKey);
 
-  return wallet_balance
+  return wallet_balance / 1000000000000000000
 }
 
 export { getPolygonMaticBalance, getPolygonWethBalance }
