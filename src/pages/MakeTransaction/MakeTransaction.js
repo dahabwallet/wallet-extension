@@ -4,19 +4,23 @@ import { RotatingLines } from 'react-loader-spinner'
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
 import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
 import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
+import maticSendTransaction from "../../scripts/Polygon/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
+import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
+
 
 import 'bootstrap/dist/css/bootstrap.css';
 
 const abbreviations_map = {
   "casper": "CSPR",
   "ethereum": "ETH",
-  "solana": "SOL"
+  "solana": "SOL",
+  "polygon": "MATIC"
 }
 
 const parseBalance = (balance) => {
@@ -39,6 +43,11 @@ const getSelectedChainBalance = async (selectedChain) => {
     case 'solana':
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
+    case 'polygon':
+      let matic_balance =
+        // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
+        await getPolygonMaticBalance(priv_key);
+      return matic_balance
     default:
       console.log(`Chain Not Found`);
   }
@@ -61,6 +70,11 @@ const transferTransaction = async (selectedChain, receiverAddr, amount, navigate
       case 'Solana':
         await solSendTransaction(sender_priv_key, receiverAddr, amount)
         break;
+      case 'Polygon':
+        await maticSendTransaction(sender_priv_key, receiverAddr, amount)
+        break;
+      default:
+        break;
     }
     navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
   } catch (e) {
@@ -73,7 +87,7 @@ const transferTransaction = async (selectedChain, receiverAddr, amount, navigate
 const MakeTransactionPage = () => {
   const [receiverAddr, setReceiverAddr] = useState("");
   const [amount, setAmount] = useState("");
-  const chains = ["Casper", "Ethereum", "Solana"];
+  const chains = ["Casper", "Ethereum", "Solana", "Polygon"];
   const [balance, setBalance] = useState('-')
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
   const [loadingRing, setLoadingRing] = useState(false)
