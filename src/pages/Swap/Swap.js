@@ -4,15 +4,15 @@ import { RotatingLines } from 'react-loader-spinner'
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
 import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
 import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
-import maticSendTransaction from "../../scripts/Polygon/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
 import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
 
+import ethereumEthToPolygonWeth from "../../scripts/Bridges/EthereumEthToPolygonWeth";
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -44,80 +44,74 @@ const getSelectedChainBalance = async (selectedChain) => {
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
     case 'polygon':
-      let matic_balance =
-        // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
-        await getPolygonMaticBalance(priv_key);
-      return matic_balance
+      let polygon_balance = await getPolygonWethBalance(priv_key, pub_key);
+      return polygon_balance
     default:
       console.log(`Chain Not Found`);
   }
 }
 
-const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading) => {
-  try {
+const transferCrossChainTransaction = async (selectedChainFrom, selectedChainTo, amount, navigate, setLoadingRing) => {
+  if (selectedChainFrom.toLowerCase() == 'ethereum' && selectedChainTo.toLowerCase() == 'polygon') {
+    setLoadingRing(true);
+    try {
+      let priv_key = window.localStorage.getItem(`ETH_privateKey`);
+      let pub_key = window.localStorage.getItem(`ETH_publicKey`);
 
-    let chain_name = selectedChain.toLowerCase()
-    let abbr = abbreviations_map[chain_name]
-    let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-    setLoading(true)
-    switch (selectedChain) {
-      case 'Casper':
-        await csprSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      case 'Ethereum':
-        await ethSendTransaction(sender_priv_key, receiverAddr, amount);
-        break;
-      case 'Solana':
-        await solSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      case 'Polygon':
-        await maticSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      default:
-        break;
+      await ethereumEthToPolygonWeth(priv_key, pub_key, amount);
+      setLoadingRing(false);
+      navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
+    } catch (e) {
+      let error_message = e.toString().split("(", 1)[0]
+      navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
     }
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  } catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+  } else {
+    alert("Will be supported soon!")
   }
-  setLoading(false)
 }
 
-const MakeTransactionPage = () => {
-  const [receiverAddr, setReceiverAddr] = useState("");
+const SwapPage = () => {
   const [amount, setAmount] = useState("");
   const chains = ["Casper", "Ethereum", "Solana", "Polygon"];
-  const [balance, setBalance] = useState('-')
-  const [amount_str, setAmountStr] = useState("Amount in CSPR")
+  const [balanceFrom, setBalanceFrom] = useState('-')
+  const [balanceTo, setBalanceTo] = useState('-')
   const [loadingRing, setLoadingRing] = useState(false)
 
-  let navigate = useNavigate();
+  const [selectedChainFrom, setSelectedChainFrom] = useState(chains[0]);
+  const [selectedChainTo, setSelectedChainTo] = useState(chains[1]);
 
-
-  const [selectedChain, setSelectedChain] = useState(chains[0]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function getBalance() {
-      setBalance('-')
-      let balance = await getSelectedChainBalance(selectedChain)
-      setBalance(parseBalance(balance))
+    async function getBalanceFrom() {
+      setBalanceFrom('-')
+      let balanceFrom = await getSelectedChainBalance(selectedChainFrom)
+      setBalanceFrom(parseBalance(balanceFrom))
     }
-    getBalance()
-    setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
-  }, [selectedChain])
+    getBalanceFrom()
+  }, [selectedChainFrom])
+
+  useEffect(() => {
+    async function getBalanceTo() {
+      setBalanceTo('-')
+      let balanceTo = await getSelectedChainBalance(selectedChainTo)
+      setBalanceTo(parseBalance(balanceTo))
+    }
+    getBalanceTo()
+  }, [selectedChainTo])
 
   return (
     <div style={styles.parentStyle}>
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
+      <h4 class="display-6" style={{ color: colors["black-text"] }}>Swap Page</h4>
       <form>
         <select
           style={styles.dropDownStyle}
-          value={selectedChain}
+          value={selectedChainFrom}
           onChange={e => {
-            setSelectedChain(e.target.value)
+            setSelectedChainFrom(e.target.value)
           }}
         >
           {chains.map((value) => (
@@ -128,37 +122,45 @@ const MakeTransactionPage = () => {
         </select>
       </form>
 
-      <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
+      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainFrom} Balance: {balanceFrom}</h2>
 
-      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
-      <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
-        setAmount(e.target.value)
-      }}
-      />
+      <form>
+        <select
+          style={styles.dropDownStyle}
+          value={selectedChainTo}
+          onChange={e => {
+            setSelectedChainTo(e.target.value)
+          }}
+        >
+          {chains.map((value) => (
+            <option value={value} key={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </form>
+
+      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainTo} Balance: {balanceTo}</h2>
+
+      <MDBInput label='Amount in Home Chain Native Currency' type='text' size='lg' onChange={e => setAmount(e.target.value)} />
+
       <RotatingLines
         strokeColor="green"
         strokeWidth="5"
         animationDuration="0.75"
         width="90"
         visible={loadingRing} />
-      <button className='btn' style={styles.btnStyle} onClick={() => {
-        setLoadingRing(true)
-        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
-      }
-      }>
-        Send Transaction
-      </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('/swap')
+        transferCrossChainTransaction(selectedChainFrom, selectedChainTo, amount, navigate, setLoadingRing)
       }
       }>
-        Want to Swap?
+        Swap
       </button>
     </div >
-
   );
 }
+
 const styles = {
   parentStyle: {
     height: "100vh",
@@ -175,8 +177,7 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none",
-    marginBottom: 20
+    border: "none"
   },
   dropDownStyle: {
     fontWeight: 'bold',
@@ -199,4 +200,4 @@ const styles = {
     height: 200
   }
 }
-export default MakeTransactionPage;
+export default SwapPage;
