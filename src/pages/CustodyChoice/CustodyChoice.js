@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import colors from "../../includes/colors"
-import { RotatingLines } from 'react-loader-spinner'
 import store_password from "../../scripts/store_password"
+
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
+
 import { useLocation, useNavigate } from "react-router-dom";
 
 const non_custodial_create_wallet_local = (navigate, password) => {
@@ -13,6 +13,7 @@ const non_custodial_create_wallet_local = (navigate, password) => {
   create_wallet_sol();
   create_wallet_eth();
   navigate('/')
+  window.location.reload();
 }
 
 const custodial_create_wallet_local = (password) => {
@@ -20,40 +21,29 @@ const custodial_create_wallet_local = (password) => {
 }
 
 const CustodyChoicePage = () => {
-  const [loadingRing, setLoadingRing] = useState(false)
   const navigate = useNavigate()
   const { state } = useLocation();
-  const [password, set_password] = useState(state.password);
 
   return (
     <div style={styles.parentStyle}>
-
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <h3>Custody choice</h3> <br></br>
       <h5>Non-Custodial: you keep your own keys</h5> <br></br>
       <h5>Custodial: we securely store your keys</h5> <br></br>
 
-      <RotatingLines
-        strokeColor="green"
-        strokeWidth="5"
-        animationDuration="0.75"
-        width="90"
-        visible={loadingRing} />
-
-      <button className='btn' style={styles.btnStyle} onClick={() => non_custodial_create_wallet_local(navigate, password)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => non_custodial_create_wallet_local(navigate, state.password)}>
         Non-Custodial
       </button>
-      <br></br>
 
-
-      <button className='btn' style={styles.btnStyle} onClick={() => custodial_create_wallet_local(navigate, password)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => custodial_create_wallet_local(navigate, state.password)}>
         Custodial
       </button>
     </div >
 
   );
 }
+
 const styles = {
   parentStyle: {
     height: "100vh",
@@ -70,11 +60,13 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none"
+    border: "none",
+    marginBottom: 20
   },
   imgStyle: {
     width: 240,
     height: 200
   }
 }
+
 export default CustodyChoicePage;
