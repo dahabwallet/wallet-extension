@@ -1,28 +1,22 @@
 import { useState } from 'react';
 import colors from "../../includes/colors"
 import { RotatingLines } from 'react-loader-spinner'
-import { MDBInput } from 'mdb-react-ui-kit';
-import meets_password_criteria from "../../scripts/meets_password_criteria"
 import store_password from "../../scripts/store_password"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
 import { useLocation, useNavigate } from "react-router-dom";
-// need to bring password input from the NewWalletPassword File
-const NonCustodial_create_wallet_local = (password) => {
-  if (meets_password_criteria(password)) {
-    store_password(password);
-    create_wallet_cspr();
-    create_wallet_sol();
-    create_wallet_eth();
-    // create_wallet_polygon()
-  } else {
-    alert("Wallet Creation Failed!")
-  }
+
+const non_custodial_create_wallet_local = (navigate, password) => {
+  store_password(password);
+  create_wallet_cspr();
+  create_wallet_sol();
+  create_wallet_eth();
+  navigate('/')
 }
 
-const Custodial_create_wallet_local = (password) => {
-// Omar Function call
+const custodial_create_wallet_local = (password) => {
+  // Omar Function call
 }
 
 const CustodyChoicePage = () => {
@@ -30,8 +24,7 @@ const CustodyChoicePage = () => {
   const navigate = useNavigate()
   const { state } = useLocation();
   const [password, set_password] = useState(state.password);
-console.log("password is: " + password)
- 
+
   return (
     <div style={styles.parentStyle}>
 
@@ -47,14 +40,14 @@ console.log("password is: " + password)
         animationDuration="0.75"
         width="90"
         visible={loadingRing} />
-      
-      <button className='btn' style={styles.btnStyle} onClick={() => NonCustodial_create_wallet_local(password)}>
+
+      <button className='btn' style={styles.btnStyle} onClick={() => non_custodial_create_wallet_local(navigate, password)}>
         Non-Custodial
       </button>
       <br></br>
 
-      
-      <button className='btn' style={styles.btnStyle} onClick={() => Custodial_create_wallet_local(password)}>
+
+      <button className='btn' style={styles.btnStyle} onClick={() => custodial_create_wallet_local(navigate, password)}>
         Custodial
       </button>
     </div >

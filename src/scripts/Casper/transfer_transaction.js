@@ -12,7 +12,7 @@ const send_transaction_casper = async (
   receiverPublicAddress,
   amount
 ) => {
-  
+
   senderPrivateKey = new Uint8Array(Buffer.from(senderPrivateKey.split(',')))
 
   const MOTE_RATE = 1000000000;

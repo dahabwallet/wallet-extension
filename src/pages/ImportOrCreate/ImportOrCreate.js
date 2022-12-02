@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import colors from "../../includes/colors"
-import { RotatingLines } from 'react-loader-spinner'
-
-
+import { useNavigate } from "react-router-dom";
 
 const ImportOrCreateWalletPage = () => {
-  const [loadingRing, setLoadingRing] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div style={styles.parentStyle}>
@@ -13,27 +10,24 @@ const ImportOrCreateWalletPage = () => {
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <h4>Import an existing wallet? or create a new one?</h4> <br></br>
-      
-      <RotatingLines
-        strokeColor="green"
-        strokeWidth="5"
-        animationDuration="0.75"
-        width="90"
-        visible={loadingRing} />
-      
-      <a href="./importWallet"><button className='btn' style={styles.btnStyle} onClick={() => setLoadingRing(true)}>
-        Import Wallet
-      </button></a>
-      <br></br>
 
-      
-      <a href="./newWalletPassword"><button className='btn' style={styles.btnStyle} onClick={() => setLoadingRing(true)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => {
+        navigate('importWallet')
+      }}>
+        Import Wallet
+      </button>
+
+      <button className='btn' style={styles.btnStyle} onClick={() => {
+        navigate('newWalletPassword')
+      }}>
         Create New Wallet
-      </button></a>
+      </button>
+
     </div >
 
   );
 }
+
 const styles = {
   parentStyle: {
     height: "100vh",
@@ -50,7 +44,8 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none"
+    border: "none",
+    marginBottom: 20
   },
   imgStyle: {
     width: 240,

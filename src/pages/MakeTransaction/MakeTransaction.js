@@ -148,15 +148,13 @@ const MakeTransactionPage = () => {
       }>
         Send Transaction
       </button>
-<br></br>
-<a href="../swap">
+
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        setLoadingRing(true)
-        
+        navigate('/swap')
       }
       }>
         Want to Swap?
-      </button></a>
+      </button>
     </div >
 
   );
@@ -177,7 +175,8 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none"
+    border: "none",
+    marginBottom: 20
   },
   dropDownStyle: {
     fontWeight: 'bold',
