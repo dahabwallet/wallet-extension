@@ -18,13 +18,6 @@ const getPolygonMaticBalance = async (sender_priv_key) => {
   let wallet_balance = await wallet.getBalance()
   wallet_balance = ethers.utils.formatEther(wallet_balance)
 
-  //eth
-  //private: 0xfc0388a0c757ca1e52566ad96e4e665b5689c926a1633eb6018b44747cbfb1b7
-  //public: 0xaA6b9a0225c8BB5f51f1d88d3b422f4fE0D85eA5
-  //matic: polygon
-  //private: 0xe8752f6e5611749bcf78d6e862210d2b58a852081fe129e46c164312c39ee9b9
-  //public: 0x4fA8959EB0aAAdb87D828111056474dCaD9E518A
-
   return wallet_balance
 }
 
@@ -34,8 +27,8 @@ const getPolygonWethBalance = async (privateKey, publicKey) => {
   const posClient = new POSClient();
 
   await posClient.init({
-    network: "testnet",  // 'testnet' or 'mainnet'
-    version: "mumbai", // 'mumbai' or 'v1'
+    network: "testnet",
+    version: "mumbai",
     parent: {
       provider: new HDWalletProvider(
         privateKey,

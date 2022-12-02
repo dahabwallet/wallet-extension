@@ -46,7 +46,7 @@ const getSelectedChainBalance = async (selectedChain) => {
     case 'polygon':
       let matic_balance =
         // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
-        await getPolygonMaticBalance(pub_key);
+        await getPolygonMaticBalance(priv_key);
       return matic_balance
     default:
       console.log(`Chain Not Found`);

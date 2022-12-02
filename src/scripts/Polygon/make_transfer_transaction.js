@@ -7,8 +7,6 @@ async function sendTransaction(sender_priv_key, receiver_pub_key, amount) {
     chainId: 80001,
     _defaultProvider: (providers) => new providers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com/')
   };
-  //https://rpc-mumbai.maticvigil.com/
-  //https://rpc-mumbai.matic.today/
 
   let provider = new ethers.providers.getDefaultProvider(dic_net)
   let walletPrivKey = new ethers.Wallet(sender_priv_key)
