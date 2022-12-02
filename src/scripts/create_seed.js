@@ -1,8 +1,8 @@
-const bip39 = require("bip39");
+import { mnemonicToSeedSync } from "bip39";
 
-async function create_seed(master_mnemonic){
-    let buffer = await bip39.mnemonicToSeedSync(master_mnemonic)
-    let seed = new Uint8Array(buffer.toJSON().data.slice(0,32))
+async function create_seed(master_mnemonic) {
+    let buffer = await mnemonicToSeedSync(master_mnemonic)
+    let seed = new Uint8Array(buffer.toJSON().data.slice(0, 32))
     console.log(`returned seed: ${seed}`);
     return seed
 
