@@ -10,15 +10,17 @@ import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-// import polygonGetBalance from ""
-// LINE 165 CHANGE THE SET ADDRESS FUNCTION
+import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
+
+import ethereumEthToPolygonWeth from "../../scripts/Bridges/EthereumEthToPolygonWeth";
+
 import 'bootstrap/dist/css/bootstrap.css';
 
 const abbreviations_map = {
   "casper": "CSPR",
   "ethereum": "ETH",
   "solana": "SOL",
-  "polygon":"MATIC"
+  "polygon": "MATIC"
 }
 
 const parseBalance = (balance) => {
@@ -42,57 +44,44 @@ const getSelectedChainBalance = async (selectedChain) => {
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
     case 'polygon':
-      let polygon_balance = await solGetBalance(pub_key);
+      let polygon_balance = await getPolygonWethBalance(priv_key, pub_key);
       return polygon_balance
     default:
       console.log(`Chain Not Found`);
   }
 }
 
-/* REPLACE WITH SWAP FUNCTION
-const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading) => {
-  try {
+const transferCrossChainTransaction = async (selectedChainFrom, selectedChainTo, amount, navigate, setLoadingRing) => {
+  if (selectedChainFrom.toLowerCase() == 'ethereum' && selectedChainTo.toLowerCase() == 'polygon') {
+    setLoadingRing(true);
+    try {
+      let priv_key = window.localStorage.getItem(`ETH_privateKey`);
+      let pub_key = window.localStorage.getItem(`ETH_publicKey`);
 
-    let chain_name = selectedChain.toLowerCase()
-    let abbr = abbreviations_map[chain_name]
-    let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-    setLoading(true)
-    switch (selectedChain) {
-      case 'Casper':
-        await csprSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      case 'Ethereum':
-        await ethSendTransaction(sender_priv_key, receiverAddr, amount);
-        break;
-      case 'Solana':
-        await solSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
-      case 'Polygon':
-       // await polygonSendTransaction(sender_priv_key, receiverAddr, amount)
-        break;
+      await ethereumEthToPolygonWeth(priv_key, pub_key, amount);
+      setLoadingRing(false);
+      navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
+    } catch (e) {
+      let error_message = e.toString().split("(", 1)[0]
+      navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
     }
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  } catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+  } else {
+    alert("Will be supported soon!")
   }
-  setLoading(false)
-}*/
+}
 
 const SwapPage = () => {
-  const [receiverAddr, setReceiverAddr] = useState("");
   const [amount, setAmount] = useState("");
   const chains = ["Casper", "Ethereum", "Solana", "Polygon"];
   const [balanceFrom, setBalanceFrom] = useState('-')
   const [balanceTo, setBalanceTo] = useState('-')
-  const [amount_str, setAmountStr] = useState("to")
   const [loadingRing, setLoadingRing] = useState(false)
-
-  let navigate = useNavigate();
-
 
   const [selectedChainFrom, setSelectedChainFrom] = useState(chains[0]);
   const [selectedChainTo, setSelectedChainTo] = useState(chains[1]);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function getBalanceFrom() {
       setBalanceFrom('-')
@@ -100,8 +89,6 @@ const SwapPage = () => {
       setBalanceFrom(parseBalance(balanceFrom))
     }
     getBalanceFrom()
-  
-    setAmountStr(`Amount in ${abbreviations_map[selectedChainFrom.toLowerCase()]}`);
   }, [selectedChainFrom])
 
   useEffect(() => {
@@ -111,10 +98,7 @@ const SwapPage = () => {
       setBalanceTo(parseBalance(balanceTo))
     }
     getBalanceTo()
-  
-    setAmountStr(`Amount in ${abbreviations_map[selectedChainFrom.toLowerCase()]}`);
   }, [selectedChainTo])
-
 
   return (
     <div style={styles.parentStyle}>
@@ -138,8 +122,6 @@ const SwapPage = () => {
         </select>
       </form>
 
-      
-
       <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainFrom} Balance: {balanceFrom}</h2>
 
       <form>
@@ -158,30 +140,27 @@ const SwapPage = () => {
         </select>
       </form>
 
-      
+      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainTo} Balance: {balanceTo}</h2>
 
-      <h2 class="display-3" style={styles.fineTextStyle}>{selectedChainTo} Balance: {balanceFrom}</h2>
-    
-      <MDBInput label='Amount in Home Chain Native Currency' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} /> 
-      
+      <MDBInput label='Amount in Home Chain Native Currency' type='text' size='lg' onChange={e => setAmount(e.target.value)} />
+
       <RotatingLines
         strokeColor="green"
         strokeWidth="5"
         animationDuration="0.75"
         width="90"
         visible={loadingRing} />
+
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        setLoadingRing(true)
-        //transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
+        transferCrossChainTransaction(selectedChainFrom, selectedChainTo, amount, navigate, setLoadingRing)
       }
       }>
         Swap
       </button>
-
     </div >
-
   );
 }
+
 const styles = {
   parentStyle: {
     height: "100vh",
