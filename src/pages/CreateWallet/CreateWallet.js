@@ -15,9 +15,9 @@ const create_wallet_local = async (password) => {
     store_password(password);
     const my_mnemonic = create_mnemonic();
     const my_seed = await create_seed(my_mnemonic)
-    create_wallet_cspr();
     create_wallet_eth(my_mnemonic);
     create_wallet_sol(my_seed);
+    create_wallet_cspr(my_seed);
 
     window.location.reload();
   } else {
