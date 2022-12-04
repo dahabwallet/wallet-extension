@@ -14,8 +14,6 @@ import { signTransactionFactory } from "@certusone/wormhole-sdk/lib/cjs/solana";
 import { ethers } from "ethers";
 import { Signer, sendAndConfirmTransaction } from "@solana/web3.js";
 const web3_sol = require("@solana/web3.js");
-var Web3 = require("web3");
-
 const WORMHOLE_RPC_HOSTS = ["https://wormhole-v2-testnet-api.certus.one"];
 const solana_node = new web3_sol.Connection("https://api.devnet.solana.com");
 let bs58 = require("bs58");
