@@ -4,15 +4,13 @@ import { RotatingLines } from 'react-loader-spinner'
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
-import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
-import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
+import { getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
 
 import ethereumEthToPolygonWeth from "../../scripts/Bridges/EthereumEthToPolygonWeth";
+import ethereumEthToSolanaWeth from "../../scripts/Bridges/EthereumEthToSolanaWeth.js";
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -52,21 +50,29 @@ const getSelectedChainBalance = async (selectedChain) => {
 }
 
 const transferCrossChainTransaction = async (selectedChainFrom, selectedChainTo, amount, navigate, setLoadingRing) => {
-  if (selectedChainFrom.toLowerCase() == 'ethereum' && selectedChainTo.toLowerCase() == 'polygon') {
-    setLoadingRing(true);
-    try {
+  setLoadingRing(true);
+  try {
+    console.log('From: ', selectedChainFrom.toLowerCase())
+    console.log('To: ', selectedChainTo.toLowerCase())
+    if (selectedChainFrom.toLowerCase() === 'ethereum' && selectedChainTo.toLowerCase() === 'polygon') {
       let priv_key = window.localStorage.getItem(`ETH_privateKey`);
       let pub_key = window.localStorage.getItem(`ETH_publicKey`);
 
       await ethereumEthToPolygonWeth(priv_key, pub_key, amount);
-      setLoadingRing(false);
-      navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-    } catch (e) {
-      let error_message = e.toString().split("(", 1)[0]
-      navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+    } else if (selectedChainFrom.toLowerCase() === 'ethereum' && selectedChainTo.toLowerCase() === 'solana') {
+      let sol_priv_key = window.localStorage.getItem(`SOL_privateKey`);
+      let sol_pub_key = window.localStorage.getItem(`SOL_publicKey`);
+      let eth_priv_key = window.localStorage.getItem(`ETH_privateKey`);
+      await ethereumEthToSolanaWeth(amount, eth_priv_key, sol_pub_key, sol_priv_key)
+    } else {
+      alert("Will be supported soon!")
     }
-  } else {
-    alert("Will be supported soon!")
+    setLoadingRing(false);
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
+  } catch (e) {
+    setLoadingRing(false);
+    let error_message = e.toString().split("(", 1)[0]
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
   }
 }
 
