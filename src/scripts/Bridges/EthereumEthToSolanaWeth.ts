@@ -143,12 +143,12 @@ export async function swap_eth_to_sol(
   const calculate_token_account = await get_reciever_address(sol_signer);
 
   console.log(calculate_token_account);
-  /*const transfer_receipt = await transferFromEthNative(
+  const transfer_receipt = await transferFromEthNative(
     EMITTER_ADDRESS_ETH,
     signer,
     amount,
     1,
-    calculate_token_account
+    calculate_token_account.toBuffer()
   );
-  redeem(transfer_receipt, sol_signer);*/
+  redeem(transfer_receipt, sol_signer);
 }

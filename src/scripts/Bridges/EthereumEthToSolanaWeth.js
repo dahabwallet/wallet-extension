@@ -229,14 +229,11 @@ exports.getSignedVAAWithRetry = getSignedVAAWithRetry;
 /// Utility function to get the address we will send the WETH for
 function get_reciever_address(signer) {
   return __awaiter(this, void 0, void 0, function () {
-    var weth_sol_addr, ay7aga, reciever_account;
+    var weth_sol_addr, reciever_account;
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
           weth_sol_addr = new web3_sol.PublicKey(WETH_SOL_ADDRESS);
-          ay7aga = new web3_sol.PublicKey(
-            "CZonDbGg9rbBGFMxiPnKtuLyVLv6qBQKKovTUFzwjCh1"
-          );
           return [
             4 /*yield*/,
             (0, spl_token_1.getOrCreateAssociatedTokenAccount)(
@@ -328,7 +325,8 @@ function swap_eth_to_sol(to_transfer, eth_private_key, solana_private_key) {
       amount,
       sol_key_pair,
       sol_signer,
-      calculate_token_account;
+      calculate_token_account,
+      transfer_receipt;
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
@@ -352,6 +350,19 @@ function swap_eth_to_sol(to_transfer, eth_private_key, solana_private_key) {
         case 1:
           calculate_token_account = _a.sent();
           console.log(calculate_token_account);
+          return [
+            4 /*yield*/,
+            (0, wormhole_sdk_1.transferFromEthNative)(
+              EMITTER_ADDRESS_ETH,
+              signer,
+              amount,
+              1,
+              calculate_token_account.toBuffer()
+            ),
+          ];
+        case 2:
+          transfer_receipt = _a.sent();
+          redeem(transfer_receipt, sol_signer);
           return [2 /*return*/];
       }
     });

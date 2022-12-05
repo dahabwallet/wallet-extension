@@ -74,7 +74,8 @@ const transferCrossChainTransaction = async (
     ) {
       let sol_priv_key = window.localStorage.getItem(`SOL_privateKey`);
 
-      let eth_priv_key = window.localStorage.getItem(`ETH_privateKey`);
+      let eth_priv_key = window.localStorage.getItem(`ETH_privateKey`).slice(2);
+      console.log(eth_priv_key);
       await swap_eth_to_sol(
         amount,
         eth_priv_key,
