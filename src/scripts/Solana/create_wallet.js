@@ -1,11 +1,12 @@
 import store_keypair from "../store_keypair";
-import * as solanaWeb3 from "@solana/web3.js";
+import * as solanaWeb3 from '@solana/web3.js';
+import privKeyTypeEnum from "../private_key_format"
 
-const create_wallet = () => {
-  let keypair = solanaWeb3.Keypair.generate();
-  let privateKey = keypair.secretKey.toString();
-  let publicKey = keypair.publicKey.toString();
-  store_keypair("SOL", publicKey, privateKey);
-};
+const create_wallet = (length,password) => {
+	let keypair = solanaWeb3.Keypair.generate();
+	let privateKey = keypair.secretKey.toString();
+	let publicKey = keypair.publicKey.toString('hex')
+	store_keypair("SOL", publicKey, privateKey,length, password, privKeyTypeEnum.ByteArray);
+}
 
 export default create_wallet;

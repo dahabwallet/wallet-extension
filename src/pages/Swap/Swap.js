@@ -3,11 +3,12 @@ import { RotatingLines } from "react-loader-spinner";
 
 import colors from "../../includes/colors";
 import { MDBInput } from "mdb-react-ui-kit";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import csprGetBalance from "../../scripts/Casper/get_balance";
 import solGetBalance from "../../scripts/Solana/get_balance";
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance";
 import { getPolygonWethBalance } from "../../scripts/Polygon/get_balance";
+import {claimKeys} from '../../scripts/claim_keys'
 
 import ethereumEthToPolygonWeth from "../../scripts/Bridges/EthereumEthToPolygonWeth";
 import { swap_eth_to_sol } from "../../scripts/Bridges/EthereumEthToSolanaWeth.js";
@@ -25,11 +26,13 @@ const parseBalance = (balance) => {
   let nearest_decimal = 6;
   return Number(parseFloat(balance).toFixed(nearest_decimal));
 };
-const getSelectedChainBalance = async (selectedChain) => {
+const getSelectedChainBalance = async (selectedChain, length, password) => {
   const chain_name_lower = selectedChain.toLowerCase();
   let abbr = abbreviations_map[chain_name_lower];
-  let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-  let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
+
+  let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+  let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
+
 
   switch (chain_name_lower) {
     case "casper":
@@ -54,27 +57,41 @@ const transferCrossChainTransaction = async (
   selectedChainTo,
   amount,
   navigate,
-  setLoadingRing
+  setLoadingRing,
+  length, 
+  password
 ) => {
   setLoadingRing(true);
   try {
+    let abbr= 'ChainPlaceHolder';
     console.log("From: ", selectedChainFrom.toLowerCase());
     console.log("To: ", selectedChainTo.toLowerCase());
     if (
       selectedChainFrom.toLowerCase() === "ethereum" &&
       selectedChainTo.toLowerCase() === "polygon"
     ) {
-      let priv_key = window.localStorage.getItem(`ETH_privateKey`);
-      let pub_key = window.localStorage.getItem(`ETH_publicKey`);
+     
+
+      abbr= 'ETH'
+      let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
+      let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+
 
       await ethereumEthToPolygonWeth(priv_key, pub_key, amount);
     } else if (
       selectedChainFrom.toLowerCase() === "ethereum" &&
       selectedChainTo.toLowerCase() === "solana"
     ) {
-      let sol_priv_key = window.localStorage.getItem(`SOL_privateKey`);
 
-      let eth_priv_key = window.localStorage.getItem(`ETH_privateKey`).slice(2);
+      abbr= 'SOL';
+      let sol_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+
+      abbr= 'ETH';
+      let eth_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`].slice(2);
+
+
+     
+
       console.log(eth_priv_key);
       await swap_eth_to_sol(
         amount,
@@ -113,10 +130,14 @@ const SwapPage = () => {
 
   const navigate = useNavigate();
 
+  const { state } = useLocation();
+  const length= parseInt(state.length)
+  const password=  state.password
+
   useEffect(() => {
     async function getBalanceFrom() {
       setBalanceFrom("-");
-      let balanceFrom = await getSelectedChainBalance(selectedChainFrom);
+      let balanceFrom = await getSelectedChainBalance(selectedChainFrom, length, password);
       setBalanceFrom(parseBalance(balanceFrom));
     }
     getBalanceFrom();
@@ -125,7 +146,7 @@ const SwapPage = () => {
   useEffect(() => {
     async function getBalanceTo() {
       setBalanceTo("-");
-      let balanceTo = await getSelectedChainBalance(selectedChainTo);
+      let balanceTo = await getSelectedChainBalance(selectedChainTo, length, password);
       setBalanceTo(parseBalance(balanceTo));
     }
     getBalanceTo();
@@ -208,7 +229,9 @@ const SwapPage = () => {
             selectedChainTo,
             amount,
             navigate,
-            setLoadingRing
+            setLoadingRing,
+            length, 
+            password
           );
         }}
       >

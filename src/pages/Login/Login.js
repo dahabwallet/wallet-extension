@@ -5,11 +5,15 @@ import { useNavigate } from "react-router-dom";
 
 import is_password_valid from "../../scripts/is_password_valid"
 
-const login = (navigate, password) => {
+const login = (navigate,length,  password) => {
   if (
     is_password_valid(password)
   ) {
-    navigate("/wallet", { replace: true });
+    // navigate("/wallet", length, password, { replace: true });
+    // navigate("/wallet",  { replace: true });
+
+    navigate("/wallet", {replace: true, state: { length: `${length}`, password: `${password}` } });
+
   } else {
     alert("Invalid Password")
   }
@@ -17,13 +21,14 @@ const login = (navigate, password) => {
 const LoginPage = () => {
   const [password, set_password] = useState("");
   let navigate = useNavigate();
+  const length= 128
   return (
     <div style={styles.parentStyle}>
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 className="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <MDBInput label='Password' type='password' size='lg' onChange={e => set_password(e.target.value)} />
-      <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, password)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, length, password)}>
         Login
       </button>
     </div >

@@ -4,14 +4,17 @@ import store_password from "../../scripts/store_password"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
+import {default as create_wallet_polygon} from "../../scripts/Polygon/create_wallet"
+
 
 import { useLocation, useNavigate } from "react-router-dom";
 
-const non_custodial_create_wallet_local = (navigate, password) => {
+const non_custodial_create_wallet_local = (navigate,length,  password) => {
   store_password(password);
-  create_wallet_cspr();
-  create_wallet_sol();
-  create_wallet_eth();
+  create_wallet_cspr(length, password);
+  create_wallet_sol(length, password);
+  create_wallet_eth(length, password);
+  create_wallet_polygon(length, password); 
   navigate('/')
   window.location.reload();
 }
@@ -23,6 +26,7 @@ const custodial_create_wallet_local = (password) => {
 const CustodyChoicePage = () => {
   const navigate = useNavigate()
   const { state } = useLocation();
+  const length= 128
 
   return (
     <div style={styles.parentStyle}>
@@ -32,7 +36,7 @@ const CustodyChoicePage = () => {
       <h5>Non-Custodial: you keep your own keys</h5> <br></br>
       <h5>Custodial: we securely store your keys</h5> <br></br>
 
-      <button className='btn' style={styles.btnStyle} onClick={() => non_custodial_create_wallet_local(navigate, state.password)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => non_custodial_create_wallet_local(navigate,length,  state.password)}>
         Non-Custodial
       </button>
 
