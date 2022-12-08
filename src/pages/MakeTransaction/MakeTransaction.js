@@ -3,16 +3,20 @@ import { RotatingLines } from 'react-loader-spinner'
 
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
 import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
 import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
 import maticSendTransaction from "../../scripts/Polygon/make_transfer_transaction"
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
 
+
+import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
+ 
+
+import {claimKeys} from '../../scripts/claim_keys'
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -27,15 +31,20 @@ const parseBalance = (balance) => {
   let nearest_decimal = 6;
   return Number(parseFloat(balance).toFixed(nearest_decimal))
 }
-const getSelectedChainBalance = async (selectedChain) => {
+const getSelectedChainBalance = async (selectedChain, length, password) => {
   const chain_name_lower = selectedChain.toLowerCase();
   let abbr = abbreviations_map[chain_name_lower];
-  let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
-  let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
+
+
+  let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+  let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
+
+  // console.log ("priv_key: ", priv_key)
+  // console.log ("pubkey: ", pub_key)
 
   switch (chain_name_lower) {
     case 'casper':
-      let cspr_balance = await csprGetBalance();
+      let cspr_balance = await csprGetBalance(pub_key);
       return cspr_balance
     case 'ethereum':
       let eth_balance = await ethGetBalance(priv_key);
@@ -53,12 +62,14 @@ const getSelectedChainBalance = async (selectedChain) => {
   }
 }
 
-const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading) => {
+const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, length, password) => {
   try {
 
     let chain_name = selectedChain.toLowerCase()
     let abbr = abbreviations_map[chain_name]
-    let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
+    let sender_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+
+    // console.log ("sender_prive_key: ", sender_priv_key)
     setLoading(true)
     switch (selectedChain) {
       case 'Casper':
@@ -91,6 +102,12 @@ const MakeTransactionPage = () => {
   const [balance, setBalance] = useState('-')
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
   const [loadingRing, setLoadingRing] = useState(false)
+  const[pubKey, setPubKey]= useState("0x0000")
+
+ 
+  const { state } = useLocation();
+  const length= parseInt(state.length)
+  const password=  state.password
 
   let navigate = useNavigate();
 
@@ -100,10 +117,14 @@ const MakeTransactionPage = () => {
   useEffect(() => {
     async function getBalance() {
       setBalance('-')
-      let balance = await getSelectedChainBalance(selectedChain)
+      setPubKey("0x000")
+      let balance = await getSelectedChainBalance(selectedChain, length, password)
       setBalance(parseBalance(balance))
     }
     getBalance()
+    // let abbr= abbreviations_map[selectedChain.toLowerCase()]
+    setPubKey( claimKeys(`${abbreviations_map[selectedChain.toLowerCase()]}`, length, password )[`${abbreviations_map[selectedChain.toLowerCase()]}_publicKey`]);
+
     setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
   }, [selectedChain])
 
@@ -129,6 +150,8 @@ const MakeTransactionPage = () => {
       </form>
 
       <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
+      <h2 class="display-3" style={styles.fineTextStyle}>Public Key: {pubKey}</h2>
+
 
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
       <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
@@ -143,14 +166,14 @@ const MakeTransactionPage = () => {
         visible={loadingRing} />
       <button className='btn' style={styles.btnStyle} onClick={() => {
         setLoadingRing(true)
-        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing)
+        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, length, password)
       }
       }>
         Send Transaction
       </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('/swap')
+        navigate('/swap',  {state: { length: `${length}`, password: `${password}` } })
       }
       }>
         Want to Swap?
@@ -190,7 +213,7 @@ const styles = {
   },
   fineTextStyle: {
     color: colors["black-text"],
-    fontSize: 22,
+    fontSize: window.innerWidth/48,
     justifyContent: "center",
     marginTop: 10
   },
