@@ -9,25 +9,27 @@ import privatekey_exists from "./scripts/privatekey_exists"
 import Report from "./pages/Report/Report";
 import NewWalletPassword from "./pages/NewWalletPassword/NewWalletPassword"
 import CustodyChoice from "./pages/CustodyChoice/CustodyChoice"
+import store from './store';
+import { Provider } from 'react-redux';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {
-          privatekey_exists() ? <Route path="/" element={<Login />} /> :
-            <Route path="/" element={<ImportOrCreate />} />
-
-        }
-        <Route path="/importWallet" element={<ImportWallet />} />
-        <Route path="/newWalletPassword" element={<NewWalletPassword />} />
-        <Route path="/wallet" element={<MakeTransaction />} />
-        <Route path="/swap" element={<Swap />} />
-        <Route path="/report" element={<Report />} />
-        <Route path="/CustodyChoice" element={<CustodyChoice />} />
-
-      </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          {
+            privatekey_exists() ? <Route path="/" element={<Login />} /> :
+              <Route path="/" element={<ImportOrCreate />} />
+          }
+          <Route path="/importWallet" element={<ImportWallet />} />
+          <Route path="/newWalletPassword" element={<NewWalletPassword />} />
+          <Route path="/wallet" element={<MakeTransaction />} />
+          <Route path="/swap" element={<Swap />} />
+          <Route path="/report" element={<Report />} />
+          <Route path="/CustodyChoice" element={<CustodyChoice />} />
+        </Routes>
+      </Router>
+    </Provider>
   );
 }
 

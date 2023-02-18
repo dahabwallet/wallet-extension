@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const navigate_local = (navigate, page) => {
   navigate(`/${page}`)
+  window.location.reload();
 }
 const ReportPage = () => {
   //Sample Navigation 1 [Success]: navigate('report', { state: { message: 'Transaction Succeeded', statusId: 1, page: '' } })

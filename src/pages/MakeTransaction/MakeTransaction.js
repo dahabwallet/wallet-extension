@@ -11,12 +11,13 @@ import maticSendTransaction from "../../scripts/Polygon/make_transfer_transactio
 import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
+import { useSelector } from 'react-redux';
 
 
 import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
- 
 
-import {claimKeys} from '../../scripts/claim_keys'
+
+import { claimKeys } from '../../scripts/claim_keys'
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -102,12 +103,12 @@ const MakeTransactionPage = () => {
   const [balance, setBalance] = useState('-')
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
   const [loadingRing, setLoadingRing] = useState(false)
-  const[pubKey, setPubKey]= useState("0x0000")
+  const [pubKey, setPubKey] = useState("0x0000")
 
- 
-  const { state } = useLocation();
-  const length= parseInt(state.length)
-  const password=  state.password
+
+  const length = 128
+
+  const password = useSelector((state) => state.password);
 
   let navigate = useNavigate();
 
@@ -123,7 +124,7 @@ const MakeTransactionPage = () => {
     }
     getBalance()
     // let abbr= abbreviations_map[selectedChain.toLowerCase()]
-    setPubKey( claimKeys(`${abbreviations_map[selectedChain.toLowerCase()]}`, length, password )[`${abbreviations_map[selectedChain.toLowerCase()]}_publicKey`]);
+    setPubKey(claimKeys(`${abbreviations_map[selectedChain.toLowerCase()]}`, length, password)[`${abbreviations_map[selectedChain.toLowerCase()]}_publicKey`]);
 
     setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
   }, [selectedChain])
@@ -173,7 +174,7 @@ const MakeTransactionPage = () => {
       </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('/swap',  {state: { length: `${length}`, password: `${password}` } })
+        navigate('/swap', { state: { length: `${length}`, password: `${password}` } })
       }
       }>
         Want to Swap?
@@ -213,7 +214,7 @@ const styles = {
   },
   fineTextStyle: {
     color: colors["black-text"],
-    fontSize: window.innerWidth/48,
+    fontSize: window.innerWidth / 48,
     justifyContent: "center",
     marginTop: 10
   },
