@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RotatingLines } from 'react-loader-spinner'
+import { useSelector } from 'react-redux';
 
 import colors from "../../includes/colors"
 import { MDBInput } from 'mdb-react-ui-kit';
@@ -12,11 +13,7 @@ import csprGetBalance from "../../scripts/Casper/get_balance"
 import solGetBalance from "../../scripts/Solana/get_balance"
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
 
-
 import { getPolygonMaticBalance, getPolygonWethBalance } from "../../scripts/Polygon/get_balance"
- 
-
-import {claimKeys} from '../../scripts/claim_keys'
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -31,16 +28,11 @@ const parseBalance = (balance) => {
   let nearest_decimal = 6;
   return Number(parseFloat(balance).toFixed(nearest_decimal))
 }
-const getSelectedChainBalance = async (selectedChain, length, password) => {
+
+const getSelectedChainBalance = async (selectedChain, key_pair) => {
+  const pub_key = key_pair.publicKey
+  const priv_key = key_pair.privateKey
   const chain_name_lower = selectedChain.toLowerCase();
-  let abbr = abbreviations_map[chain_name_lower];
-
-
-  let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
-  let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
-
-  // console.log ("priv_key: ", priv_key)
-  // console.log ("pubkey: ", pub_key)
 
   switch (chain_name_lower) {
     case 'casper':
@@ -54,7 +46,6 @@ const getSelectedChainBalance = async (selectedChain, length, password) => {
       return sol_balance
     case 'polygon':
       let matic_balance =
-        // await getPolygonWethBalance(priv_key, pub_key); //This finds weth balance on polygon
         await getPolygonMaticBalance(priv_key);
       return matic_balance
     default:
@@ -62,27 +53,21 @@ const getSelectedChainBalance = async (selectedChain, length, password) => {
   }
 }
 
-const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, length, password) => {
+const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, privateKey) => {
   try {
-
-    let chain_name = selectedChain.toLowerCase()
-    let abbr = abbreviations_map[chain_name]
-    let sender_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
-
-    // console.log ("sender_prive_key: ", sender_priv_key)
     setLoading(true)
     switch (selectedChain) {
       case 'Casper':
-        await csprSendTransaction(sender_priv_key, receiverAddr, amount)
+        await csprSendTransaction(privateKey, receiverAddr, amount)
         break;
       case 'Ethereum':
-        await ethSendTransaction(sender_priv_key, receiverAddr, amount);
+        await ethSendTransaction(privateKey, receiverAddr, amount);
         break;
       case 'Solana':
-        await solSendTransaction(sender_priv_key, receiverAddr, amount)
+        await solSendTransaction(privateKey, receiverAddr, amount)
         break;
       case 'Polygon':
-        await maticSendTransaction(sender_priv_key, receiverAddr, amount)
+        await maticSendTransaction(privateKey, receiverAddr, amount)
         break;
       default:
         break;
@@ -102,30 +87,27 @@ const MakeTransactionPage = () => {
   const [balance, setBalance] = useState('-')
   const [amount_str, setAmountStr] = useState("Amount in CSPR")
   const [loadingRing, setLoadingRing] = useState(false)
-  const[pubKey, setPubKey]= useState("0x0000")
-
- 
-  const { state } = useLocation();
-  const length= parseInt(state.length)
-  const password=  state.password
+  const [pubKey, setPubKey] = useState("0x0000")
 
   let navigate = useNavigate();
 
-
   const [selectedChain, setSelectedChain] = useState(chains[0]);
+  const KEYS = useSelector(state => state.keys);
 
   useEffect(() => {
+    const abbr = abbreviations_map[selectedChain.toLowerCase()];
+
     async function getBalance() {
       setBalance('-')
       setPubKey("0x000")
-      let balance = await getSelectedChainBalance(selectedChain, length, password)
+      let balance = await getSelectedChainBalance(selectedChain, KEYS[abbr])
       setBalance(parseBalance(balance))
     }
-    getBalance()
-    // let abbr= abbreviations_map[selectedChain.toLowerCase()]
-    setPubKey( claimKeys(`${abbreviations_map[selectedChain.toLowerCase()]}`, length, password )[`${abbreviations_map[selectedChain.toLowerCase()]}_publicKey`]);
 
-    setAmountStr(`Amount in ${abbreviations_map[selectedChain.toLowerCase()]}`);
+    getBalance()
+    setPubKey(KEYS[abbr].publicKey);
+
+    setAmountStr(`Amount in ${abbr}`);
   }, [selectedChain])
 
   return (
@@ -152,7 +134,6 @@ const MakeTransactionPage = () => {
       <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
       <h2 class="display-3" style={styles.fineTextStyle}>Public Key: {pubKey}</h2>
 
-
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
       <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
         setAmount(e.target.value)
@@ -166,22 +147,22 @@ const MakeTransactionPage = () => {
         visible={loadingRing} />
       <button className='btn' style={styles.btnStyle} onClick={() => {
         setLoadingRing(true)
-        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, length, password)
+        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, KEYS[abbreviations_map[selectedChain.toLowerCase()]].privateKey)
       }
       }>
         Send Transaction
       </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('/swap',  {state: { length: `${length}`, password: `${password}` } })
+        navigate('/swap')
       }
       }>
         Want to Swap?
       </button>
     </div >
-
   );
 }
+
 const styles = {
   parentStyle: {
     height: "100vh",
@@ -213,7 +194,7 @@ const styles = {
   },
   fineTextStyle: {
     color: colors["black-text"],
-    fontSize: window.innerWidth/48,
+    fontSize: window.innerWidth / 48,
     justifyContent: "center",
     marginTop: 10
   },
@@ -222,4 +203,5 @@ const styles = {
     height: 200
   }
 }
+
 export default MakeTransactionPage;
