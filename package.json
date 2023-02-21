@@ -17,6 +17,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "argon2": "^0.30.3",
+    "argon2-browser": "^1.18.0",
     "assert": "^2.0.0",
     "axios": "^1.2.0",
     "bootstrap": "^5.2.2",
@@ -32,6 +33,7 @@
     "jks-js": "^1.1.0",
     "jszip-utils": "^0.1.0",
     "mdb-react-ui-kit": "^4.2.0",
+    "path-browserify": "^1.0.1",
     "pbkdf2": "^3.1.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
@@ -42,6 +44,7 @@
     "react-scripts": "5.0.1",
     "twofish": "^1.0.1",
     "web-vitals": "^2.1.4",
+    "webpack": "^5.75.0",
     "yarn": "^1.22.19"
   },
   "browser": {

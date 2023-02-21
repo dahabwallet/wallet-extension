@@ -2,7 +2,6 @@
 
 # dependencies
 /node_modules
-/playground/react_playground/node_modules
 /.pnp
 .pnp.js
 
