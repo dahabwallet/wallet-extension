@@ -30,14 +30,14 @@ module.exports.byteArrayToString= function byteArrayToString(byteArray){
 
     // Otherwise, fall back to 7-bit ASCII only
     var result = "";
-    console.log ("bytearray: ", byteArray)
-    console.log ("bytearray length: ", byteArray.byteLength)
+    // console.log ("bytearray: ", byteArray)
+    // console.log ("bytearray length: ", byteArray.byteLength)
 
     for (var i=0; i<byteArray.byteLength; i++){
         // console.log(`from the converter: bytearray[${i}] = ${byteArray[i]}`)
         // console.log(`test: ${Encoding.ASCII.GetString(new byte[]{ 65 })}`)
         result += String.fromCharCode(byteArray[i])
-        console.log("str: ", result)
+        // console.log("str: ", result)
     }/*from   w  ww . ja v a 2 s .  co  m*/
     return result;
 }
