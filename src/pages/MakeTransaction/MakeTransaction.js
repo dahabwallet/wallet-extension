@@ -31,7 +31,6 @@ const parseBalance = (balance) => {
 
 const getSelectedChainBalance = async (selectedChain, key_pair) => {
   const pub_key = key_pair.publicKey
-  const priv_key = key_pair.privateKey
   const chain_name_lower = selectedChain.toLowerCase();
 
   switch (chain_name_lower) {
@@ -39,14 +38,13 @@ const getSelectedChainBalance = async (selectedChain, key_pair) => {
       let cspr_balance = await csprGetBalance(pub_key);
       return cspr_balance
     case 'ethereum':
-      let eth_balance = await ethGetBalance(priv_key);
+      let eth_balance = await ethGetBalance(pub_key);
       return eth_balance
     case 'solana':
       let sol_balance = await solGetBalance(pub_key);
       return sol_balance
     case 'polygon':
-      let matic_balance =
-        await getPolygonMaticBalance(priv_key);
+      let matic_balance = await getPolygonMaticBalance(pub_key);
       return matic_balance
     default:
       console.log(`Chain Not Found`);
