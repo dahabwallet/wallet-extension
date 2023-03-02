@@ -1,5 +1,6 @@
 import colors from "../../includes/colors"
 import { useNavigate } from "react-router-dom";
+import GmailAuth from "../CustodyChoice/CustodialWallet/GmailAuth";
 
 const ImportOrCreateWalletPage = () => {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ const ImportOrCreateWalletPage = () => {
         Create New Wallet
       </button>
 
+  <GmailAuth />
     </div >
 
   );
