@@ -9,6 +9,7 @@ import privatekey_exists from "./scripts/privatekey_exists"
 import Report from "./pages/Report/Report";
 import NewWalletPassword from "./pages/NewWalletPassword/NewWalletPassword"
 import ShowMnemonics from "./pages/ShowMnemonics/ShowMnemonics"
+import ValidateMnemonics from "./pages/ValidateMnemonics/ValidateMnemonics"
 
 import CustodyChoice from "./pages/CustodyChoice/CustodyChoice"
 
@@ -22,7 +23,8 @@ function App() {
 
         }
         <Route path="/importWallet" element={<ImportWallet />} />
-        <Route path="/ShowMnemonics/newWalletPassword" element={<NewWalletPassword />} />
+        <Route path="/ShowMnemonics/validateMnemonics/newWalletPassword" element={<NewWalletPassword />} />
+        <Route path="/ShowMnemonics/validateMnemonics" element={<ValidateMnemonics />} />
         <Route path="/showMnemonics" element={<ShowMnemonics />} />
         <Route path="/wallet" element={<MakeTransaction />} />
         <Route path="/swap" element={<Swap />} />

@@ -1,7 +1,8 @@
 import colors from "../../includes/colors"
 import { useNavigate } from "react-router-dom";
+import { MDBInput } from 'mdb-react-ui-kit';
 
-const ShowMnemonicsPage = () => {
+const ValidateMnemonics = () => {
   const navigate = useNavigate()
 
   return (
@@ -9,25 +10,21 @@ const ShowMnemonicsPage = () => {
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
-      <h4>Step 1: Please save your credential phrases</h4> <br></br>
+      <br></br>
+      <h4> Step 2: Verify credential phrases</h4>
 
-      <button className='btn' style={styles.nemStyle} onClick={() => {
-        navigate('')
-      }}>
-        advice fringe action orange know monitor breeze reason coconut limit cash early
-      </button>
-      
-      <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('validateMnemonics')
-      }}>
+      <br></br>
+      <MDBInput label='Enter first word' type='password' size='lg' />
+      <MDBInput label='Enter last word' type='password' size='lg' />
+      <br></br>
+
+      <button className='btn' style={styles.btnStyle} onClick={() =>  navigate('newWalletPassword')}>
         next
       </button>
-
     </div >
 
   );
 }
-
 const styles = {
   parentStyle: {
     height: "100vh",
@@ -44,25 +41,11 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none",
-    marginBottom: 20
+    border: "none"
   },
   imgStyle: {
     width: 240,
     height: 200
-  },
-  nemStyle: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    color: 'black',
-    backgroundColor: colors['white'],
-    //border: 'none',
-    borderColor: 'orange',  // new property
-    borderWidth: 5,  // optional - sets the width of the border
-    marginBottom: 40,
-    marginTop: 40
   }
-  ,
-  
 }
-export default ShowMnemonicsPage;
+export default ValidateMnemonics;

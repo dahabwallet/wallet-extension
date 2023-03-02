@@ -25,7 +25,7 @@ const NewWalletPasswordPage = () => {
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <br></br>
-      <h4> Enter Password for new Wallet</h4>
+      <h4> Step 3: Enter Password for new Wallet</h4>
       <br></br>
       <MDBInput label='Password' type='password' size='lg' onChange={e => set_password(e.target.value)} />
       <MDBInput label='Confirm Password' type='password' size='lg' />
