@@ -1,7 +1,7 @@
 import colors from "../../includes/colors"
 import { useNavigate } from "react-router-dom";
 
-const ImportOrCreateWalletPage = () => {
+const ShowMnemonicsPage = () => {
   const navigate = useNavigate()
 
   return (
@@ -9,16 +9,17 @@ const ImportOrCreateWalletPage = () => {
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
-      <h4>Import an existing wallet? or create a new one?</h4> <br></br>
+      <h4>Please save your credential phrases</h4> <br></br>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
         navigate('importWallet')
+        
       }}>
         Import Wallet
       </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('ShowMnemonics')
+        navigate('newWalletPassword')
       }}>
         Create New Wallet
       </button>
@@ -52,4 +53,4 @@ const styles = {
     height: 200
   }
 }
-export default ImportOrCreateWalletPage;
+export default ShowMnemonicsPage;
