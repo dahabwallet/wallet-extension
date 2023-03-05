@@ -6,18 +6,12 @@ import store_password from "../../scripts/store_password"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
-import {claimKeys} from '../../scripts/claim_keys'
 
 
 const create_wallet_local = (length, password) => {
   if (meets_password_criteria(password)) {
-    // let obj= claimKeys("ETH", 128, "dsaff");
-    // console.log ("claimobj: ", obj)
-    // claimKeys("SOL", 128, "macoisnothing");
-    // claimKeys("CSPR", 128, "macoisnothing");
-
     store_password(password);
-    create_wallet_cspr(length,password);
+    create_wallet_cspr(length, password);
     create_wallet_sol(length, password);
     create_wallet_eth(length, password);
 
@@ -29,7 +23,7 @@ const create_wallet_local = (length, password) => {
 
 const ImportWalletPage = () => {
   const [password, set_password] = useState("");
-  const length= 128
+  const length = 128
   return (
     <div style={styles.parentStyle}>
 

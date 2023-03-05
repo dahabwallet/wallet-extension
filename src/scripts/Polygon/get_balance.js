@@ -3,22 +3,16 @@ import { POSClient, use } from "@maticnetwork/maticjs"
 import HDWalletProvider from "@truffle/hdwallet-provider"
 
 const { Web3ClientPlugin } = require("@maticnetwork/maticjs-web3");
-const getPolygonMaticBalance = async (sender_priv_key) => {
-
+const getPolygonMaticBalance = async (publicKey) => {
   const dic_net = {
     name: 'Mumbai Testnet',
     chainId: 80001,
     _defaultProvider: (providers) => new providers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com/')
   };
-
   let provider = new ethers.providers.getDefaultProvider(dic_net)
-  let walletPrivKey = new ethers.Wallet(sender_priv_key)
 
-  const wallet = walletPrivKey.connect(provider)
-  let wallet_balance = await wallet.getBalance()
-  wallet_balance = ethers.utils.formatEther(wallet_balance)
-
-  return wallet_balance
+  const balance = await provider.getBalance(publicKey);
+  return ethers.utils.formatEther(balance);
 }
 
 const getPolygonWethBalance = async (privateKey, publicKey) => {

@@ -4,16 +4,16 @@ import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
 
 import is_password_valid from "../../scripts/is_password_valid"
+import store_keys_in_redux from '../../scripts/KeysRedux/store_keys';
 
-const login = (navigate,length,  password) => {
+import { useDispatch } from 'react-redux';
+
+const login = (navigate, length, password, dispatch) => {
   if (
     is_password_valid(password)
   ) {
-    // navigate("/wallet", length, password, { replace: true });
-    // navigate("/wallet",  { replace: true });
-
-    navigate("/wallet", {replace: true, state: { length: `${length}`, password: `${password}` } });
-
+    store_keys_in_redux(password, dispatch)
+    navigate("/wallet", { replace: true });
   } else {
     alert("Invalid Password")
   }
@@ -21,14 +21,15 @@ const login = (navigate,length,  password) => {
 const LoginPage = () => {
   const [password, set_password] = useState("");
   let navigate = useNavigate();
-  const length= 128
+  const dispatch = useDispatch();
+  const length = 128
   return (
     <div style={styles.parentStyle}>
 
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 className="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <MDBInput label='Password' type='password' size='lg' onChange={e => set_password(e.target.value)} />
-      <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, length, password)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => login(navigate, length, password, dispatch)}>
         Login
       </button>
     </div >

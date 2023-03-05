@@ -8,10 +8,11 @@ import csprGetBalance from "../../scripts/Casper/get_balance";
 import solGetBalance from "../../scripts/Solana/get_balance";
 import ethGetBalance from "../../scripts/ethereum/eth_get_balance";
 import { getPolygonWethBalance } from "../../scripts/Polygon/get_balance";
-import {claimKeys} from '../../scripts/claim_keys'
 
 import ethereumEthToPolygonWeth from "../../scripts/Bridges/EthereumEthToPolygonWeth";
 import { swap_eth_to_sol } from "../../scripts/Bridges/EthereumEthToSolanaWeth.js";
+
+import { useSelector } from 'react-redux';
 
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -26,12 +27,12 @@ const parseBalance = (balance) => {
   let nearest_decimal = 6;
   return Number(parseFloat(balance).toFixed(nearest_decimal));
 };
-const getSelectedChainBalance = async (selectedChain, length, password) => {
+const getSelectedChainBalance = async (selectedChain, keyPair) => {
   const chain_name_lower = selectedChain.toLowerCase();
   let abbr = abbreviations_map[chain_name_lower];
 
-  let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
-  let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
+  let priv_key = keyPair.privateKey
+  let pub_key = keyPair.publicKey
 
 
   switch (chain_name_lower) {
@@ -58,24 +59,20 @@ const transferCrossChainTransaction = async (
   amount,
   navigate,
   setLoadingRing,
-  length, 
-  password
+  keyPairs
 ) => {
   setLoadingRing(true);
   try {
-    let abbr= 'ChainPlaceHolder';
+    let abbr = 'ChainPlaceHolder';
     console.log("From: ", selectedChainFrom.toLowerCase());
     console.log("To: ", selectedChainTo.toLowerCase());
     if (
       selectedChainFrom.toLowerCase() === "ethereum" &&
       selectedChainTo.toLowerCase() === "polygon"
     ) {
-     
-
-      abbr= 'ETH'
-      let pub_key = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
-      let priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
-
+      abbr = 'ETH'
+      let pub_key = keyPairs[abbr].publicKey;
+      let priv_key = keyPairs[abbr].privateKey;
 
       await ethereumEthToPolygonWeth(priv_key, pub_key, amount);
     } else if (
@@ -83,14 +80,11 @@ const transferCrossChainTransaction = async (
       selectedChainTo.toLowerCase() === "solana"
     ) {
 
-      abbr= 'SOL';
-      let sol_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
+      abbr = 'SOL';
+      let sol_priv_key = keyPairs[abbr].privateKey;
 
-      abbr= 'ETH';
-      let eth_priv_key = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`].slice(2);
-
-
-     
+      abbr = 'ETH';
+      let eth_priv_key = keyPairs[abbr].privateKey.slice(2);
 
       console.log(eth_priv_key);
       await swap_eth_to_sol(
@@ -130,14 +124,12 @@ const SwapPage = () => {
 
   const navigate = useNavigate();
 
-  const { state } = useLocation();
-  const length= parseInt(state.length)
-  const password=  state.password
+  const KEYS = useSelector(state => state.keys);
 
   useEffect(() => {
     async function getBalanceFrom() {
       setBalanceFrom("-");
-      let balanceFrom = await getSelectedChainBalance(selectedChainFrom, length, password);
+      let balanceFrom = await getSelectedChainBalance(selectedChainFrom, KEYS[abbreviations_map[selectedChainFrom.toLowerCase()]]);
       setBalanceFrom(parseBalance(balanceFrom));
     }
     getBalanceFrom();
@@ -146,7 +138,7 @@ const SwapPage = () => {
   useEffect(() => {
     async function getBalanceTo() {
       setBalanceTo("-");
-      let balanceTo = await getSelectedChainBalance(selectedChainTo, length, password);
+      let balanceTo = await getSelectedChainBalance(selectedChainTo, KEYS[abbreviations_map[selectedChainTo.toLowerCase()]]);
       setBalanceTo(parseBalance(balanceTo));
     }
     getBalanceTo();
@@ -230,8 +222,7 @@ const SwapPage = () => {
             amount,
             navigate,
             setLoadingRing,
-            length, 
-            password
+            KEYS
           );
         }}
       >

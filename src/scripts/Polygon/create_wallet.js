@@ -6,12 +6,11 @@ import { claimKeys } from "../claim_keys";
 const create_wallet = (length, password) => {
 	//Uses the same keys as Ethereum 
 
-	let abbr= 'ETH'
+	let abbr = 'ETH'
 	const privateKey = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
 	const publicKey = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
-	
 
-	store_keypair("MATIC", publicKey, privateKey, length, password,  privKeyTypeEnum.Hex)
+	store_keypair("MATIC", publicKey, privateKey, length, password, privKeyTypeEnum.Hex)
 }
 
 export default create_wallet
