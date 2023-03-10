@@ -6,14 +6,23 @@ import store_password from "../../scripts/store_password"
 import create_wallet_cspr from "../../scripts/Casper/create_wallet"
 import create_wallet_sol from "../../scripts/Solana/create_wallet"
 import create_wallet_eth from "../../scripts/ethereum/eth_create_wallet"
+import { default as create_wallet_polygon } from "../../scripts/Polygon/create_wallet"
 
+import create_mnemonic from "../../scripts/create_mnemonic.js"
+import create_seed from "../../scripts/create_seed"
 
-const create_wallet_local = (length, password) => {
+const create_wallet_local = async (password) => {
   if (meets_password_criteria(password)) {
     store_password(password);
-    create_wallet_cspr(length, password);
-    create_wallet_sol(length, password);
-    create_wallet_eth(length, password);
+    const length = 128
+
+    const my_mnemonic = create_mnemonic();
+    const my_seed = await create_seed(my_mnemonic)
+
+    create_wallet_eth(my_mnemonic, password, length);
+    create_wallet_sol(my_seed, password, length);
+    create_wallet_cspr(my_seed, password, length);
+    create_wallet_polygon(password, length);
 
     window.location.reload();
   } else {
