@@ -54,6 +54,7 @@ const getSelectedChainBalance = async (selectedChain, key_pair) => {
 const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, privateKey) => {
   try {
     setLoading(true)
+    console.log('Selected Chain: ', selectedChain)
     switch (selectedChain) {
       case 'Casper':
         await csprSendTransaction(privateKey, receiverAddr, amount)
@@ -145,6 +146,7 @@ const MakeTransactionPage = () => {
         visible={loadingRing} />
       <button className='btn' style={styles.btnStyle} onClick={() => {
         setLoadingRing(true)
+        console.log('abc')
         transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, KEYS[abbreviations_map[selectedChain.toLowerCase()]].privateKey)
       }
       }>

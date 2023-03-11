@@ -11,7 +11,6 @@ const store_keypair = async (chain_prefix, publicKey, privateKey, length, passwo
 
     let privateKeyArray = stringToByteArray(privateKey)
     let publicKeyArray = stringToByteArray(publicKey) // This assumes that the public key has no 0x prefix
-
     console.log('storing_pass........')
     // this needs to return an object for a better design
     let hashing_info = generateKeyFromPassword(password, length, salt)
@@ -37,7 +36,6 @@ const store_keypair = async (chain_prefix, publicKey, privateKey, length, passwo
 
     let stored_enc_key = byteArrayToString(new Uint8Array(enc_key_encrypted))
     let stored_dhash = byteArrayToString(new Uint8Array(double_hash["words"]))
-
     // begin
     let chain_name_hashed = generateKeyFromPassword(`${chain_prefix}`, length, salt)[1]
     let chain_name_pub_hashed = generateKeyFromPassword(`${chain_prefix}_publicKey`, length, salt)[1]

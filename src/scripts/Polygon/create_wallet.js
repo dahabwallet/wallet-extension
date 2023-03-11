@@ -3,9 +3,8 @@ import { ethers } from "ethers"
 import privKeyTypeEnum from "../private_key_format"
 import { claimKeys } from "../claim_keys";
 
-const create_wallet = (length, password) => {
+const create_wallet = (password, length) => {
 	//Uses the same keys as Ethereum 
-
 	let abbr = 'ETH'
 	const privateKey = claimKeys(`${abbr}`, length, password)[`${abbr}_privateKey`];
 	const publicKey = claimKeys(`${abbr}`, length, password)[`${abbr}_publicKey`];
