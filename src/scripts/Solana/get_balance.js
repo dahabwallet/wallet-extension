@@ -1,10 +1,17 @@
 import { PublicKey, Connection, clusterApiUrl } from "@solana/web3.js";
 
 const get_balance = async (publicKey) => {
-  let connection = new Connection(clusterApiUrl("devnet"));
+  let balance = 0;
 
-  publicKey = new PublicKey(publicKey);
-  let balance = await connection.getBalance(publicKey);
+  try {
+    const connection = new Connection('https://api.testnet.solana.com');
+    const accountInfo = await connection.getAccountInfo(new PublicKey(publicKey));
+    const lamports = accountInfo?.lamports;
+    balance = lamports ? lamports / 1000000000 : 0;
+  } catch (error) {
+    console.log('Error: ', error)
+  }
+
   return balance;
 };
 
