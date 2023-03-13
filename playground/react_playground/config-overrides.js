@@ -10,8 +10,9 @@ module.exports = function override(config) {
     https: require.resolve("https-browserify"),
     os: require.resolve("os-browserify"),
     url: require.resolve("url"),
-    argon2: require.resolve ("argon2-browser"),
-    path: require.resolve("path-browserify")
+    path: require.resolve("path-browserify"),
+    
+    
   });
   config.resolve.fallback = fallback;
   config.plugins = (config.plugins || []).concat([
@@ -22,5 +23,22 @@ module.exports = function override(config) {
     }),
   ]);
   config.ignoreWarnings = [/Failed to parse source map/];
+
+  config.module.rules.push({
+    test: /\.wasm$/,
+    loader: "base64-loader",
+    type: "javascript/auto",
+});
+
+config.module.noParse = /\.wasm$/;
+
+config.module.rules.forEach(rule => {
+    (rule.oneOf || []).forEach(oneOf => {
+        if (oneOf.loader && oneOf.loader.indexOf("file-loader") >= 0) {
+            oneOf.exclude.push(/\.wasm$/);
+        }
+    });
+});
+
   return config;
 };

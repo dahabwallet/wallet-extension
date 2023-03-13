@@ -2,8 +2,13 @@
 
 // import colors from "../includes/colors"
 
+// import { argon2d } from "argon2";
+const argon2= require('argon2-browser')
+
+async function hash_password(){
 
 
+}
 
 
 const  Mnemon =  () => {
@@ -12,6 +17,13 @@ const  Mnemon =  () => {
    
     <div>
     <p>hello from the other side</p>
+
+    <script src="node_modules/argon2-browser/lib/argon2.js"></script>
+    <script src="node_modules/argon2-browser/dist/argon2-bundled.min.js"></script>
+
+    <button onClick= {argon2.hash()} > Change color</button>
+
+    <p>Ended the function</p>
 
     </div>
 
