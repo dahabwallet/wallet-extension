@@ -11,6 +11,8 @@ import NewWalletPassword from "./pages/NewWalletPassword/NewWalletPassword"
 import CustodyChoice from "./pages/CustodyChoice/CustodyChoice"
 import { Provider } from 'react-redux'
 import store from "./scripts/store"
+import ShowMnemonics from "./pages/ShowMnemonics/ShowMnemonics"
+import ValidateMnemonics from "./pages/ValidateMnemonics/ValidateMnemonics"
 
 function App() {
   return (
@@ -23,12 +25,15 @@ function App() {
               <Route path="/" element={<ImportOrCreate />} />
 
           }
+
           <Route path="/importWallet" element={<ImportWallet />} />
           <Route path="/newWalletPassword" element={<NewWalletPassword />} />
           <Route path="/wallet" element={<MakeTransaction />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/report" element={<Report />} />
           <Route path="/CustodyChoice" element={<CustodyChoice />} />
+          <Route path="/validateMnemonics" element={<ValidateMnemonics />} />
+          <Route path="/mnemonics" element={<ShowMnemonics />} />
 
         </Routes>
       </Router>
