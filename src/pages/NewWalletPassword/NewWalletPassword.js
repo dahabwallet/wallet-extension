@@ -6,9 +6,7 @@ import meets_password_criteria from "../../scripts/meets_password_criteria"
 import { useLocation, useNavigate } from "react-router-dom";
 const check_password_follows_criteria = (password, navigate) => {
   if (meets_password_criteria(password)) {
-
-    //console.log(exported_Pass)
-    navigate('../CustodyChoice', { state: { password } })
+    navigate('importOrCreate', { state: { password } })
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
   }

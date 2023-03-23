@@ -22,12 +22,12 @@ function App() {
         <Routes>
           {
             privatekey_exists() ? <Route path="/" element={<Login />} /> :
-              <Route path="/" element={<ImportOrCreate />} />
-
+              <Route path="/" element={<NewWalletPassword />} />
           }
 
           <Route path="/importWallet" element={<ImportWallet />} />
-          <Route path="/newWalletPassword" element={<NewWalletPassword />} />
+          <Route path="/importOrCreate" element={<ImportOrCreate />} />
+
           <Route path="/wallet" element={<MakeTransaction />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/report" element={<Report />} />

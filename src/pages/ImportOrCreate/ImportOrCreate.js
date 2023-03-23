@@ -1,8 +1,9 @@
 import colors from "../../includes/colors"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ImportOrCreateWalletPage = () => {
   const navigate = useNavigate()
+  const { state } = useLocation();
 
   return (
     <div style={styles.parentStyle}>
@@ -12,13 +13,13 @@ const ImportOrCreateWalletPage = () => {
       <h4>Import an existing wallet? or create a new one?</h4> <br></br>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('importWallet')
+        navigate('/importWallet', { state: { password: state.password } })
       }}>
         Import Wallet
       </button>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('newWalletPassword')
+        navigate('/CustodyChoice', { state: { password: state.password } })
       }}>
         Create New Wallet
       </button>
