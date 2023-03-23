@@ -1,8 +1,9 @@
 import colors from "../../includes/colors"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ShowMnemonicsPage = () => {
   const navigate = useNavigate()
+  const { state } = useLocation();
 
   return (
     <div style={styles.parentStyle}>
@@ -11,14 +12,12 @@ const ShowMnemonicsPage = () => {
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <h4>Step 2: Please save your credential phrases</h4> <br></br>
 
-      <button className='btn' style={styles.nemStyle} onClick={() => {
-        navigate('')
-      }}>
-        advice fringe action orange know monitor breeze reason coconut limit cash early
-      </button>
+      <div style={styles.nemStyle}>
+        {state.mnemonics}
+      </div>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
-        navigate('/validateMnemonics')
+        navigate('/validateMnemonics', { state: { mnemonics: state.mnemonics } })
       }}>
         next
       </button>
@@ -56,7 +55,8 @@ const styles = {
     fontSize: 24,
     color: 'black',
     backgroundColor: colors['white'],
-    //border: 'none',
+    padding: '10px',
+    border: 'solid',
     borderColor: 'orange',  // new property
     borderWidth: 5,  // optional - sets the width of the border
     marginBottom: 40,

@@ -21,7 +21,7 @@ const non_custodial_create_wallet_local = async (navigate, password) => {
   create_wallet_eth(my_mnemonic, password, length);
   create_wallet_polygon(password, length);
   //TODO: don't pass password as a parameter.
-  navigate('/')
+  navigate('/mnemonics', { state: { mnemonics: my_mnemonic } })
   window.location.reload();
 }
 

@@ -1,10 +1,24 @@
-
+import { useState } from 'react';
 import colors from "../../includes/colors"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MDBInput } from 'mdb-react-ui-kit';
+
+const validate_mnemonics = (mnemonics, firstWord, lastWord, navigate) => {
+  const mnemonics_split = mnemonics.split(' ')
+  console.log('Mnemonics: ', mnemonics_split, firstWord, lastWord)
+  if (mnemonics_split[0] == firstWord && mnemonics_split[11] == lastWord) {
+    navigate('/')
+  } else {
+    alert("Incorrect words")
+  }
+}
 
 const ValidateMnemonics = () => {
   const navigate = useNavigate()
+  const { state } = useLocation();
+
+  const [firstWord, setFirstWord] = useState("")
+  const [lastWord, setLastWord] = useState("")
 
   return (
     <div style={styles.parentStyle}>
@@ -15,11 +29,13 @@ const ValidateMnemonics = () => {
       <h4> Step 3: Verify credential phrases</h4>
 
       <br></br>
-      <MDBInput label='Enter first word' type='password' size='lg' />
-      <MDBInput label='Enter last word' type='password' size='lg' />
+      <MDBInput label='Enter first word' size='lg' onChange={e => setFirstWord(e.target.value)} />
+      <MDBInput label='Enter last word' size='lg' onChange={e => setLastWord(e.target.value)} />
       <br></br>
 
-      <button className='btn' style={styles.btnStyle} onClick={() => navigate('/')}>
+      <button className='btn' style={styles.btnStyle} onClick={() => {
+        validate_mnemonics(state.mnemonics, firstWord, lastWord, navigate);
+      }}>
         next
       </button>
     </div >
