@@ -4,18 +4,18 @@ import { MDBInput } from 'mdb-react-ui-kit';
 import { RotatingLines } from 'react-loader-spinner'
 import meets_password_criteria from "../../scripts/meets_password_criteria"
 import { useLocation, useNavigate } from "react-router-dom";
-const check_password_follows_criteria = (password, navigate)=>{
+const check_password_follows_criteria = (password, navigate) => {
   if (meets_password_criteria(password)) {
-    
+
     //console.log(exported_Pass)
-    navigate('../CustodyChoice', { state: {password} })
+    navigate('../CustodyChoice', { state: { password } })
   } else {
     alert("Please, use a stronger password with at least one digit, one uppercase, one lowercase, one special character and a minimum length of 8 characters.")
   }
 }
 const NewWalletPasswordPage = () => {
   const [password, set_password] = useState("");
- // const [passwordValidFlag, set_passwordValidFlag] = useState("");
+  // const [passwordValidFlag, set_passwordValidFlag] = useState("");
   const [loadingRing, setLoadingRing] = useState(false)
   let navigate = useNavigate();
   const { state } = useLocation();
@@ -25,7 +25,7 @@ const NewWalletPasswordPage = () => {
       <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
       <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
       <br></br>
-      <h4> Enter Password for new Wallet</h4>
+      <h4>Step 1: Enter Password for new Wallet</h4>
       <br></br>
       <MDBInput label='Password' type='password' size='lg' onChange={e => set_password(e.target.value)} />
       <MDBInput label='Confirm Password' type='password' size='lg' />
@@ -38,7 +38,7 @@ const NewWalletPasswordPage = () => {
         width="90"
         visible={loadingRing} />
 
-      <button className='btn' style={styles.btnStyle} onClick={() =>  check_password_follows_criteria(password, navigate)}>
+      <button className='btn' style={styles.btnStyle} onClick={() => check_password_follows_criteria(password, navigate)}>
         Create Wallet
       </button>
     </div >
