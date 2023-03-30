@@ -36,6 +36,8 @@ export const TREASURY_WALLET =
 
 export const CONNECTION = {
   NODE_ADDRESS: proxyServer + NODE_RPC_ADDRESS,
+  // NODE_ADDRESS: "http://95.216.44.9:7777/rpc",
+
   CHAIN_NAME: process.env.REACT_APP_CHAIN_NAME || 'casper-test',
 
   CONTRACT_NAME: process.env.REACT_APP_CONTRACT_NAME || 'VINFTv0_0_1',
