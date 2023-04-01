@@ -20,8 +20,8 @@ export const proxyServer = process.env.REACT_APP_PROXY_SERVER || '';
 export const NFT_STORAGE_KEY = process.env.REACT_APP_NFT_STORAGE_KEY;
 export const NODE_RPC_ADDRESS =
   process.env.REACT_APP_NODE_RPC_ADDRESS ||
-  'https://node-clarity-testnet.make.services/rpc';
-
+  "https://3r740m9jm2.execute-api.us-east-1.amazonaws.com/dev/?url=http://195.201.174.222:7777/rpc";
+ 
 export const USER_KEY_PAIR_PATH =
   process.env.REACT_APP_USER_KEY_PAIR_PATH ||
   'D:/Ibrahim/github-projects/New folder/casperNFT_marketplace/deploy-scripts/keys/';

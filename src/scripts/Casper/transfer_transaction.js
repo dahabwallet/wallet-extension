@@ -34,7 +34,6 @@ export async function send_transaction_casper(
   amount,
 
 ) {
-  console.log(`Transfer Transacction started`);
   const MOTE_RATE = 1000000000;
 
   const KEYS_USER = await mapOwnerKeys(privateKey);

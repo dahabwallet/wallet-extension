@@ -57,8 +57,7 @@ const transferTransaction = async (selectedChain, receiverAddr, amount, navigate
     setLoading(true)
     switch (selectedChain) {
       case 'Casper':
-        let transferDeployHash= await csprSendTransaction(privateKey, receiverAddr, amount)
-        console.log(`casper_transfer_deploy hash: ${transferDeployHash}`);
+        await csprSendTransaction(privateKey, receiverAddr, amount)
         break;
       case 'Ethereum':
         await ethSendTransaction(privateKey, receiverAddr, amount);
