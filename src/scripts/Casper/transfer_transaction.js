@@ -78,4 +78,6 @@ export async function send_transaction_casper(
   return transferDeployHash;
 }
 
+export default send_transaction_casper
+
 
