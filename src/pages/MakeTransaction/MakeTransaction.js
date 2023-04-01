@@ -32,8 +32,9 @@ const parseBalance = (balance) => {
 const getSelectedChainBalance = async (selectedChain, key_pair) => {
   const pub_key = key_pair.publicKey
   const chain_name_lower = selectedChain.toLowerCase();
-
+  
   switch (chain_name_lower) {
+    
     case 'casper':
       let cspr_balance = await csprGetBalance(pub_key);
       return cspr_balance
@@ -51,13 +52,13 @@ const getSelectedChainBalance = async (selectedChain, key_pair) => {
   }
 }
 
-const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, privateKey) => {
+const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, privateKey, pubKey) => {
   try {
     setLoading(true)
-    console.log('Selected Chain: ', selectedChain)
     switch (selectedChain) {
       case 'Casper':
-        await csprSendTransaction(privateKey, receiverAddr, amount)
+        let transferDeployHash= await csprSendTransaction(privateKey, pubKey, receiverAddr, amount)
+        console.log(`casper_transfer_deploy hash: ${transferDeployHash}`);
         break;
       case 'Ethereum':
         await ethSendTransaction(privateKey, receiverAddr, amount);
@@ -147,7 +148,7 @@ const MakeTransactionPage = () => {
       <button className='btn' style={styles.btnStyle} onClick={() => {
         setLoadingRing(true)
         console.log('abc')
-        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, KEYS[abbreviations_map[selectedChain.toLowerCase()]].privateKey)
+        transferTransaction(selectedChain, receiverAddr, amount, navigate, setLoadingRing, KEYS[abbreviations_map[selectedChain.toLowerCase()]].privateKey, KEYS[abbreviations_map[selectedChain.toLowerCase()]].publicKey)
       }
       }>
         Send Transaction

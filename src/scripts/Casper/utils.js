@@ -104,6 +104,7 @@ export const getAccountInfoFromCLPub: any = async (
 
 
 export const getAccountBalance: any = async (publicKey: string) => {
+  console.log(`reached before client.getAccountBalance`)
   const client = new CasperServiceByJsonRPC(CONNECTION.NODE_ADDRESS);
   const latestBlock: any = await client.getLatestBlockInfo();
   const root = await client.getStateRootHash(latestBlock.block.hash);
@@ -113,13 +114,14 @@ export const getAccountBalance: any = async (publicKey: string) => {
     balanceUref = await client.getAccountBalanceUrefByPublicKey(
       root,
       CLPublicKey.fromHex(publicKey)
+      // publicKey
     );
   } catch (err) {
     return 0;
   }
 
   //account balance from the last block
-
+  
   const balance: any = await client.getAccountBalance(
     latestBlock.block.header.state_root_hash,
     balanceUref
