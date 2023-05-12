@@ -28,10 +28,13 @@ const create_wallet_local = async (password, my_mnemonic, navigate) => {
 
 const MnemonicInputField = ({ mnemonicsArray, id }) => {
   return (
-    <MDBInput onChange={e => {
-      mnemonicsArray[id] = e.target.value
-    }}
-    />
+    <div style={{ margin: 5 }}>
+      <MDBInput onChange={e => {
+        mnemonicsArray[id] = e.target.value
+      }}
+      />
+    </div>
+
   )
 }
 
@@ -56,7 +59,10 @@ const ImportWalletPage = () => {
       <h4> Enter your 12 mnemonic phrase</h4>
 
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', paddingRight: 10, paddingLeft: 10 }}>
-        {mnemonicsComponents}
+        {mnemonicsComponents.slice(0, 6)}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', paddingRight: 10, paddingLeft: 10 }}>
+        {mnemonicsComponents.slice(6, 12)}
       </div>
 
       <button className='btn' style={styles.btnStyle} onClick={() => {
@@ -85,7 +91,8 @@ const styles = {
     fontSize: 18,
     color: "white",
     backgroundColor: colors['orange'],
-    border: "none"
+    border: "none",
+    marginTop: 20
   },
   imgStyle: {
     width: 240,
