@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import MakeTransaction from "./pages/MakeTransaction/MakeTransaction"
 import Swap from "./pages/Swap/Swap"
