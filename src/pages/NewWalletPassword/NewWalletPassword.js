@@ -56,14 +56,14 @@ const styles = {
   },
   btnStyle: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     backgroundColor: colors['orange'],
     border: "none"
   },
   imgStyle: {
-    width: 240,
-    height: 200
+    width: 180,
+    height: 140
   }
 }
 export default NewWalletPasswordPage;
