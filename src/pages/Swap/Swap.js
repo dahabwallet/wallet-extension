@@ -245,14 +245,14 @@ const styles = {
   },
   btnStyle: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     backgroundColor: colors["orange"],
     border: "none",
   },
   dropDownStyle: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     backgroundColor: colors["orange"],
     border: "none",

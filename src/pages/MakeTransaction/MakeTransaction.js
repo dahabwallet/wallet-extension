@@ -130,8 +130,8 @@ const MakeTransactionPage = () => {
         </select>
       </form>
 
-      <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
-      <h2 class="display-3" style={styles.fineTextStyle}>Public Key: {pubKey}</h2>
+      <h2 class="display-3" style={{ ...styles.fineTextStyle, fontSize: 16 }}>Balance: {balance}</h2>
+      <h2 class="display-3" style={{ ...styles.fineTextStyle, fontSize: 10, textAlign: 'center' }}>Public Key: {pubKey}</h2>
 
       <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => setReceiverAddr(e.target.value)} />
       <MDBInput label={amount_str} type='text' size='lg' onChange={e => {
@@ -176,7 +176,7 @@ const styles = {
   },
   btnStyle: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     backgroundColor: colors['orange'],
     border: "none",
@@ -184,7 +184,7 @@ const styles = {
   },
   dropDownStyle: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     backgroundColor: colors['orange'],
     border: "none",
@@ -194,13 +194,12 @@ const styles = {
   },
   fineTextStyle: {
     color: colors["black-text"],
-    fontSize: window.innerWidth / 48,
     justifyContent: "center",
     marginTop: 10
   },
   imgStyle: {
-    width: 240,
-    height: 200
+    width: 180,
+    height: 140
   }
 }
 
