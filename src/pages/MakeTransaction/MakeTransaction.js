@@ -32,8 +32,9 @@ const parseBalance = (balance) => {
 const getSelectedChainBalance = async (selectedChain, key_pair) => {
   const pub_key = key_pair.publicKey
   const chain_name_lower = selectedChain.toLowerCase();
-
+  
   switch (chain_name_lower) {
+    
     case 'casper':
       let cspr_balance = await csprGetBalance(pub_key);
       return cspr_balance
@@ -54,7 +55,6 @@ const getSelectedChainBalance = async (selectedChain, key_pair) => {
 const transferTransaction = async (selectedChain, receiverAddr, amount, navigate, setLoading, privateKey) => {
   try {
     setLoading(true)
-    console.log('Selected Chain: ', selectedChain)
     switch (selectedChain) {
       case 'Casper':
         await csprSendTransaction(privateKey, receiverAddr, amount)

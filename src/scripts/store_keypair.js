@@ -9,6 +9,7 @@ const store_keypair = async (chain_prefix, publicKey, privateKey, length, passwo
   try {
     let salt = lib.WordArray.random(length);
 
+    window.localStorage.setItem(`${chain_prefix}_pubKey`, publicKey);
     let privateKeyArray = stringToByteArray(privateKey)
     let publicKeyArray = stringToByteArray(publicKey) // This assumes that the public key has no 0x prefix
     console.log('storing_pass........')

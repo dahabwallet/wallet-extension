@@ -113,13 +113,14 @@ export const getAccountBalance: any = async (publicKey: string) => {
     balanceUref = await client.getAccountBalanceUrefByPublicKey(
       root,
       CLPublicKey.fromHex(publicKey)
+      // publicKey
     );
   } catch (err) {
     return 0;
   }
 
   //account balance from the last block
-
+  
   const balance: any = await client.getAccountBalance(
     latestBlock.block.header.state_root_hash,
     balanceUref
