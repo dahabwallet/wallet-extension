@@ -13,13 +13,17 @@ import { Provider } from 'react-redux'
 import store from "./scripts/store"
 import ShowMnemonics from "./pages/ShowMnemonics/ShowMnemonics"
 import ValidateMnemonics from "./pages/ValidateMnemonics/ValidateMnemonics"
+import Python from "./pages/Python/python"
 
 function App() {
   return (
     <Provider store={store}>
+      <Python />
+      {/* <Router>
 
-      <Router>
         <Routes>
+          <Route path="/python" element={<Python />} />
+          
           {
             privatekey_exists() ? <Route path="/" element={<Login />} /> :
               <Route path="/" element={<NewWalletPassword />} />
@@ -35,8 +39,9 @@ function App() {
           <Route path="/validateMnemonics" element={<ValidateMnemonics />} />
           <Route path="/mnemonics" element={<ShowMnemonics />} />
 
+
         </Routes>
-      </Router>
+      </Router> */}
     </Provider>
   );
 }
