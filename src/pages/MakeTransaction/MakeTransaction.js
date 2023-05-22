@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-
-import colors from "../../includes/colors"
+import colors from "../../includes/colors";
 import { MDBInput } from 'mdb-react-ui-kit';
 import { useNavigate } from "react-router-dom";
-import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction"
-import csprSendTransaction from "../../scripts/Casper/transfer_transaction"
-import solSendTransaction from "../../scripts/Solana/make_transfer_transaction"
-import csprGetBalance from "../../scripts/Casper/get_balance"
-import solGetBalance from "../../scripts/Solana/get_balance"
-import ethGetBalance from "../../scripts/ethereum/eth_get_balance"
-
+import ethSendTransaction from "../../scripts/ethereum/eth_make_transfer_transaction";
+import csprSendTransaction from "../../scripts/Casper/transfer_transaction";
+import solSendTransaction from "../../scripts/Solana/make_transfer_transaction";
+import csprGetBalance from "../../scripts/Casper/get_balance";
+import solGetBalance from "../../scripts/Solana/get_balance";
+import ethGetBalance from "../../scripts/ethereum/eth_get_balance";
 import 'bootstrap/dist/css/bootstrap.css';
 
 const abbreviations_map = {
@@ -24,84 +22,114 @@ const balance_map = {
   "solana": 0
 }
 
+/**
+ * Retrieves the balance for a given chain.
+ * @param {string} chain_name - The name of the blockchain chain.
+ * @returns {number} - The balance of the chain.
+ */
 const masterGetBalance = (chain_name) => {
   let nearest_decimal = 4;
-  return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal))
+  return Number(parseFloat(balance_map[chain_name]).toFixed(nearest_decimal));
 }
 
+/**
+ * Retrieves the balances for all chains.
+ * @param {string[]} chains - An array of chain names.
+ */
 const getAllBalances = async (chains) => {
   for (const chain_name of chains) {
-    const chain_name_lower = chain_name.toLowerCase()
-    let abbr = abbreviations_map[chain_name_lower]
+    const chain_name_lower = chain_name.toLowerCase();
+    let abbr = abbreviations_map[chain_name_lower];
     let priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
     let pub_key = window.localStorage.getItem(`${abbr}_publicKey`);
 
-    if (chain_name_lower == 'casper') {
-      let cspr_balance = await csprGetBalance()
-      balance_map[chain_name_lower] = cspr_balance
-    }
-    else if (chain_name_lower == 'ethereum') {
-      let eth_balance = await ethGetBalance(priv_key)
-      balance_map[chain_name_lower] = eth_balance
-    }
-    else if (chain_name_lower == 'solana') {
-      let sol_balance = await solGetBalance(pub_key)
-      balance_map[chain_name_lower] = sol_balance
+    if (chain_name_lower === 'casper') {
+      let cspr_balance = await csprGetBalance();
+      balance_map[chain_name_lower] = cspr_balance;
+    } else if (chain_name_lower === 'ethereum') {
+      let eth_balance = await ethGetBalance(priv_key);
+      balance_map[chain_name_lower] = eth_balance;
+    } else if (chain_name_lower === 'solana') {
+      let sol_balance = await solGetBalance(pub_key);
+      balance_map[chain_name_lower] = sol_balance;
     }
   }
 }
 
+/**
+ * Sends a transaction on the Casper blockchain.
+ * @param {function} navigate - The navigation function from react-router-dom.
+ * @param {string} sender_priv_key - The private key of the sender.
+ * @param {string} receiver_addr - The address of the receiver.
+ * @param {number} amount - The amount to send in the transaction.
+ */
 const casperSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
   try {
     await csprSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } });
+  } catch (e) {
+    let error_message = e.toString().split("(", 1)[0];
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } });
   }
 }
 
+/**
+ * Sends a transaction on the Ethereum blockchain.
+ * @param {function} navigate - The navigation function from react-router-dom.
+ * @param {string} sender_priv_key - The private key of the sender.
+ * @param {string} receiver_addr - The address of the receiver.
+ * @param {number} amount - The amount to send in the transaction.
+ */
 const ethereumSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
   try {
     await ethSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } });
+  } catch (e) {
+    let error_message = e.toString().split("(", 1)[0];
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } });
   }
 }
 
+/**
+ * Sends a transaction on the Solana blockchain.
+ * @param {function} navigate - The navigation function from react-router-dom.
+ * @param {string} sender_priv_key - The private key of the sender.
+ * @param {string} receiver_addr - The address of the receiver.
+ * @param {number} amount - The amount to send in the transaction.
+ */
 const solanaSendTransaction = async (navigate, sender_priv_key, receiver_addr, amount) => {
   try {
     await solSendTransaction(sender_priv_key, receiver_addr, amount);
-    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } })
-  }
-  catch (e) {
-    let error_message = e.toString().split("(", 1)[0]
-    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } })
+    navigate('/report', { state: { message: 'Transaction Succeeded', statusId: 1, page: 'wallet' } });
+  } catch (e) {
+    let error_message = e.toString().split("(", 1)[0];
+    navigate('/report', { state: { message: `Transaction Failed: ${error_message}`, statusId: 2, page: 'wallet' } });
   }
 }
 
-
+/**
+ * Initiates the appropriate transaction based on the selected chain.
+ * @param {function} navigate - The navigation function from react-router-dom.
+ * @param {string} chain_name - The name of the blockchain chain.
+ * @param {string} receiver_addr - The address of the receiver.
+ * @param {number} amount - The amount to send in the transaction.
+ */
 const masterSendTransaction = async (navigate, chain_name, receiver_addr, amount) => {
-  chain_name = chain_name.toLowerCase()
-  let abbr = abbreviations_map[chain_name]
+  chain_name = chain_name.toLowerCase();
+  let abbr = abbreviations_map[chain_name];
   let sender_priv_key = window.localStorage.getItem(`${abbr}_privateKey`);
 
   try {
-    if (chain_name == 'casper')
+    if (chain_name === 'casper')
       casperSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
 
-    if (chain_name == 'ethereum')
+    if (chain_name === 'ethereum')
       ethereumSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
 
-    if (chain_name == 'solana')
+    if (chain_name === 'solana')
       solanaSendTransaction(navigate, sender_priv_key, receiver_addr, amount);
-  }
-  catch (e) {
-    navigate('/report', { state: { message: 'Transaction Failed', statusId: 2, page: 'wallet' } })
+  } catch (e) {
+    navigate('/report', { state: { message: 'Transaction Failed', statusId: 2, page: 'wallet' } });
   }
 }
 
@@ -109,55 +137,52 @@ const MakeTransactionPage = () => {
   const [receiver_addr, set_receiver_addr] = useState("");
   const [amount, setAmount] = useState("");
   const chains = ["Casper", "Ethereum", "Solana"];
-  const [balance, setBalance] = useState(masterGetBalance(chains[0].toLowerCase()))
-  const [amount_str, setAmountStr] = useState("Amount in CSPR")
+  const [balance, setBalance] = useState(masterGetBalance(chains[0].toLowerCase()));
+  const [amount_str, setAmountStr] = useState("Amount in CSPR");
 
   let navigate = useNavigate();
 
   getAllBalances(chains);
-  // useEffect(() => { getAllBalances(chains); }, [])
 
   const [selected_chain, setSelectedChain] = useState(chains[0]);
 
   return (
     <div style={styles.parentStyle}>
+    <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
+    <h1 className="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
 
-      <img src={require('../../images/jewel.png')} alt="jewel" style={styles.imgStyle} />
-      <h1 class="display-3" style={{ color: colors["black-text"] }}>DAHAB</h1>
+    <form>
+      <select
+        style={styles.dropDownStyle}
+        value={selected_chain}
+        onChange={(e) => { setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map[e.target.value.toLowerCase()]}`) }}>
+        {chains.map((value) => (
+          <option value={value} key={value}>
+            {value}
+          </option>
+        ))}
+      </select>
+    </form>
 
-      <form>
-        <select
-          style={styles.dropDownStyle}
-          value={selected_chain}
-          onChange={(e) => { setSelectedChain(e.target.value); setBalance(masterGetBalance(e.target.value.toLowerCase())); setAmountStr(`Amount in ${abbreviations_map[e.target.value.toLowerCase()]}`) }}>
-          {chains.map((value) => (
-            <option value={value} key={value}>
-              {value}
-            </option>
-          ))}
-        </select>
-      </form>
+    <h2 className="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
 
-      <h2 class="display-3" style={styles.fineTextStyle}>Balance: {balance}</h2>
+    <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
+    <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
 
+    <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected_chain, receiver_addr, amount)}>
+      Send Transaction
+    </button>
+  </div>
+);
+};
 
-      <MDBInput label='Receiver Address' type='text' size='lg' onChange={e => set_receiver_addr(e.target.value)} />
-      <MDBInput label={amount_str} type='text' size='lg' onChange={e => setAmount(e.target.value)} />
-
-      <button className='btn' style={styles.btnStyle} onClick={() => masterSendTransaction(navigate, selected_chain, receiver_addr, amount)}>
-        Send Transaction
-      </button>
-    </div >
-
-  );
-}
 const styles = {
   parentStyle: {
     height: "100vh",
     width: "100vw",
     backgroundColor: colors['grey-background'],
     flexDirection: "column",
-    "font-family": 'Montserrat Alternates',
+    fontFamily: 'Montserrat Alternates',
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
@@ -189,5 +214,8 @@ const styles = {
     width: 240,
     height: 200
   }
-}
+};
+
 export default MakeTransactionPage;
+
+
